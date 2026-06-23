@@ -1,0 +1,4143 @@
+openapi: 3.0.4
+components:
+  responses:
+    bad_request:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/http_ko"
+      description: Bad request
+    internal_server_error:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/http_ko"
+      description: Unexpected error happened
+  schemas:
+    additional_reference_previous_invoice_line:
+      description: EXT-FR-FE-BG-06
+      properties:
+        previous_invoice_id:
+          description: EXT-FR-FE-136
+          type: string
+        previous_invoice_issue_date:
+          description: EXT-FR-FE-138
+          format: date
+          type: string
+        previous_invoice_line_number:
+          description: EXT-FR-FE-139
+          type: string
+        previous_invoice_type_code:
+          $ref: "#/components/schemas/invoice_type_code"
+      required:
+        - previous_invoice_id
+        - previous_invoice_type_code
+        - previous_invoice_issue_date
+        - previous_invoice_line_number
+      type: object
+    additional_supporting_document:
+      properties:
+        attached_document:
+          $ref: "#/components/schemas/binary_object"
+        document_description:
+          description: |-
+            BT-123
+
+            Supporting document description
+            A description of the supporting document.
+            Such as: timesheet, usage report etc.
+          type: string
+        document_reference:
+          description: |-
+            BT-122
+
+            Supporting document reference
+            An identifier of the supporting document.
+          type: string
+        external_document_location:
+          description: >-
+            BT-124
+
+
+            External document location
+
+            The URL (Uniform Resource Locator) that identifies where the
+            external document is located.
+
+            A means of locating the resource including its primary access
+            mechanism, e.g. http:// or ftp://. External document location shall
+            be used if the Buyer requires additional information to support the
+            Invoice. External documents do not form part of the invoice. Risks
+            can be involved when accessing external documents.
+          type: string
+        key:
+          type: string
+      required:
+        - document_reference
+        - key
+      type: object
+    allowance_or_charge:
+      properties:
+        amount:
+          description: |-
+            BT-92, BT-99, BT-136, BT-141
+
+            Document level allowance/charge amount
+            The amount of an allowance/charge, without VAT.
+          format: decimal
+          type: string
+        base_amount:
+          description: >-
+            BT-93, BT-100, BT-137, BT-142
+
+
+            Document level allowance/charge base amount
+
+            The base amount that may be used, in conjunction with the document
+            level allowance/charge percentage, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        percent:
+          description: >-
+            BT-94, BT-101, BT-138, BT-143
+
+
+            Document level allowance/charge percentage
+
+            The percentage that may be used, in conjunction with the document
+            level allowance/charge base amount, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        reason:
+          description: >-
+            BT-97, BT-104, BT-139, BT-144
+
+
+            Document level allowance/charge reason
+
+            The reason for the document level allowance/charge, expressed as
+            text.
+          type: string
+        reason_code:
+          $ref: "#/components/schemas/reason_code"
+      required:
+        - amount
+      type: object
+    allowance_or_charge_kind:
+      description: |-
+        allowance
+        charge
+      enum:
+        - allowance
+        - charge
+      type: string
+    amount:
+      description: >-
+        BT-110
+
+
+        Invoice total VAT amount
+
+        The total VAT amount for the Invoice.
+
+        The Invoice total VAT amount is the sum of all VAT category tax amounts.
+
+
+        BT-111
+
+
+        Invoice total VAT amount in accounting currency
+
+        The VAT total amount expressed in the accounting currency accepted or
+        required in the country of the Seller.
+
+        To be used when the VAT accounting currency (BT-6) differs from the
+        Invoice currency code (BT-5) in accordance with article 230 of Directive
+        2006/112 / EC on VAT. The VAT amount in accounting currency is not used
+        in the calculation of the Invoice totals.
+      properties:
+        currency_code:
+          $ref: "#/components/schemas/currency_code"
+        value:
+          format: decimal
+          type: string
+      required:
+        - value
+      type: object
+    binary_object:
+      description: BT-125
+      properties:
+        document:
+          description: >-
+            BT-125-1
+
+
+            Attached document
+
+            An attached document embedded as binary object or sent together with
+            the invoice.
+
+            Attached document is used when documentation shall be stored with
+            the Invoice for future reference or audit purposes.
+          format: byte
+          type: string
+        filename:
+          description: |-
+            BT-125-1
+
+            Attached document Filename
+            The file name of the attached document
+          type: string
+        mime_code:
+          description: |-
+            BT-125-2
+
+            Attached document Mime code
+            The mime code of the attached document.
+            Allowed mime codes:
+            - application/pdf
+            - image/png
+            - image/jpeg
+            - text/csv
+            - application/vnd.openxmlformats- officedocument.spreadsheetml.sheet
+            - application/vnd.oasis.opendocument. spreadsheet
+          type: string
+      required:
+        - mime_code
+        - filename
+      type: object
+    buyer:
+      description: |-
+        BG-7
+
+        A group of business terms providing information about the Buyer.
+      properties:
+        contact:
+          $ref: "#/components/schemas/contact"
+        electronic_address:
+          $ref: "#/components/schemas/electronic_address"
+        identifiers:
+          description: >-
+            BT-46
+
+
+            Buyer identifier
+
+            An identifier of the Buyer.
+
+            If no scheme is specified, it should be known by Buyer and Seller,
+            e.g. a previously exchanged Seller assigned identifier of the Buyer.
+
+            Scheme identifier
+
+            The identification scheme identifier of the Buyer identifier.
+
+            If used, the identification scheme shall be chosen from the entries
+            of the list published by the ISO/IEC 6523 maintenance agency.
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        legal_registration_identifier:
+          $ref: "#/components/schemas/legal_registration_identifier"
+        name:
+          description: |-
+            BT-44
+
+            Buyer name
+            The full name of the Buyer.
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+        trading_name:
+          description: >-
+            BT-45
+
+
+            Buyer trading name
+
+            A name by which the Buyer is known, other than Buyer name (also
+            known as Business name).
+
+            This may be used if different from the Buyer name.
+          type: string
+        vat_identifier:
+          description: >-
+            BT-48
+
+
+            Buyer VAT identifier
+
+            The Buyer's VAT identifier (also known as Buyer VAT identification
+            number).
+
+            VAT number prefixed by a country code based on EN ISO 3166-1 "Codes
+            for the representation of names of countries and their subdivisions"
+          type: string
+      required:
+        - name
+        - postal_address
+      type: object
+    classification_identifier:
+      properties:
+        scheme:
+          description: >-
+            Scheme identifier
+
+            The identification scheme identifier of the Item classification
+            identifier
+
+            The identification scheme shall be chosen from the entries in UNTDID
+            7143 [6].
+          type: string
+        value:
+          description: >-
+            Item classification identifier
+
+            A code for classifying the item by its type or nature.
+
+            Classification codes are used to allow grouping of similar items for
+            a various purposes e.g. public procurement (CPV), e- Commerce
+            (UNSPSC) etc.
+          type: string
+        version_scheme:
+          description: |-
+            Scheme version identifier
+            The version of the identification scheme.
+          type: string
+      required:
+        - value
+        - scheme
+        - version_scheme
+      type: object
+    company:
+      description: Company represent one legal structure with a unique SIREN code that
+        can be using sandbox or production environment
+      properties:
+        address:
+          description: Address of the company
+          type: string
+        city:
+          description: City of the company
+          type: string
+        country:
+          description: Country of the company
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        env:
+          enum:
+            - sandbox
+            - production
+          type: string
+        formal_name:
+          description: Formal name of the company
+          type: string
+        id:
+          type: integer
+        number:
+          description: Identifier of the company
+          type: string
+        number_scheme:
+          description: Source from company identifier
+          enum:
+            - sandbox
+            - fr_siren
+            - be_numero_entreprise
+          type: string
+        postcode:
+          description: Postcode of the company
+          type: string
+        trade_name:
+          description: Trade name of the company
+          type: string
+      required:
+        - id
+        - created_at
+        - env
+        - number_scheme
+        - number
+        - formal_name
+        - trade_name
+        - address
+        - postcode
+        - city
+        - country
+      type: object
+    contact:
+      description: >-
+        BG-6
+
+
+        A group of business terms providing contact information about the
+        Seller.
+
+
+        BG-9
+
+
+        Contact details can be given by the Buyer at the time of the ordering or
+        as master data exchanged prior to ordering. Contact details should not
+        be used for the purpose of routing the received Invoice internally by
+        the recipient; the Buyer reference identifier should be used for this
+        purpose.
+
+
+        EXT-FR-FE-39, EXT-FR-FE-22, EXT-FR-FE-62, EXT-FR-FE-85, EXT-FR-FE-108,
+        EXT-FR-FE-131
+      properties:
+        contact_point:
+          description: >-
+            BT-41, BT-56, EXT-FR-FE-23, EXT-FR-FE-40, EXT-FR-FE-63,
+            EXT-FR-FE-86, EXT-FR-FE-109, EXT-FR-FE-132
+
+
+            A contact point for a legal entity or person.
+
+            Such as person name, contact identification, department or office
+            identification.
+          type: string
+        department_name:
+          description: BT-41-0 Only in CII
+          type: string
+        email_address:
+          description: >-
+            BT-43, BT-58, EXT-FR-FE-25, EXT-FR-FE-42, EXT-FR-FE-65,
+            EXT-FR-FE-88, EXT-FR-FE-111, EXT-FR-FE-134
+
+
+            An e-mail address for the contact point.
+          type: string
+        phone_number:
+          description: >-
+            BT-42, BT-57, EXT-FR-FE-24, EXT-FR-FE-41, EXT-FR-FE-64,
+            EXT-FR-FE-87, EXT-FR-FE-110, EXT-FR-FE-133
+
+
+            A phone number for the contact point.
+          type: string
+      type: object
+    convert_invoice_format:
+      description: >-
+        Invoice format can be
+
+
+        1. `cii`: official format, defined as xml
+
+        2. `ubl`: official format, defined as xml
+
+        3. `en16931`: format defined in schema `en_invoice`, as json data.
+        `factur-x` can be passed as input. It will be possible to pass it as
+        output in the future.
+      enum:
+        - cii
+        - ubl
+        - en16931
+        - factur-x
+      type: string
+    create_directory_entry:
+      properties:
+        directory:
+          $ref: "#/components/schemas/directory"
+        identifier:
+          description: A Peppol address follows the format "scheme_id:participant_id", for
+            example, "0225:853322915".
+          example: 0225:853322915
+          type: string
+      required:
+        - directory
+        - identifier
+      type: object
+    credit_transfer:
+      properties:
+        payment_account_identifier:
+          $ref: "#/components/schemas/credit_transfer_identifier"
+        payment_account_name:
+          description: >-
+            BT-85
+
+
+            The name of the payment account, at a payment service provider, to
+            which payment should be made.
+          type: string
+        payment_service_provider_identifier:
+          description: >-
+            BT-86
+
+
+            An identifier for the payment service provider where a payment
+            account is located.
+
+            Such as a BIC or a national clearing code where required. No
+            identification scheme to be used.
+          type: string
+      required:
+        - payment_account_identifier
+      type: object
+    credit_transfer_identifier:
+      description: >-
+        BT-84
+
+
+        Payment account identifier
+
+        A unique identifier of the financial payment account, at a payment
+        service provider, to which payment should be made.
+
+        Such as IBAN (in case of a SEPA payment) or a national account number.
+      properties:
+        scheme:
+          type: string
+        value:
+          type: string
+      required:
+        - value
+        - scheme
+      type: object
+    currency_code:
+      description: >-
+        BT-5
+
+
+        Invoice currency code
+
+        The currency in which all Invoice amounts are given, except for the
+        Total VAT amount in accounting currency.
+
+        Only one currency shall be used in the Invoice, except for the Invoice
+        total VAT amount in accounting currency (BT-111) in accordance with
+        article 230 of Directive 2006/112/EC on VAT [2]. The lists of valid
+        currencies are registered with the ISO 4217 Maintenance Agency “Codes
+        for the representation of currencies and funds”.
+
+
+        BT-6
+
+
+        VAT accounting currency code
+
+        The currency used for VAT accounting and reporting purposes as accepted
+        or required in the country of the Seller.
+
+        Shall be used in combination with the Invoice total VAT amount in
+        accounting currency (BT-111) when the VAT accounting currency code
+        differs from the Invoice currency code. The lists of valid currencies
+        are registered with the ISO 4217 Maintenance Agency “Codes for the
+        representation of currencies and funds”. Please refer to Article 230 of
+        the Council Directive 2006/112/EC [2] for more information.
+      type: string
+    delivery_information:
+      description: >-
+        BG-13
+
+
+        A group of business terms providing information about where and when the
+        goods and services invoiced are delivered.
+      properties:
+        deliver_to_name:
+          description: |-
+            BT-70
+
+            Deliver to party name
+            The name of the party to which the goods and services are delivered.
+            Shall be used if the Deliver to party is different from the Buyer.
+          type: string
+        delivery_date:
+          description: >-
+            BT-72
+
+
+            Actual delivery date
+
+            the date on which the supply of goods or services was made or
+            completed.
+          format: date
+          type: string
+        delivery_identifier:
+          description: >-
+            BT-71
+
+
+            Deliver to location identifier
+
+            An identifier for the location at which the goods and services are
+            delivered.
+
+            If no scheme is specified, it should be known by Buyer and Seller,
+            e.g. a previously exchanged Buyer or Seller assigned identifier.
+
+            Scheme identifier
+
+            The identification scheme identifier of the Deliver to location
+            identifier.
+
+            If used, the identification scheme shall be chosen from the entries
+            of the list published by the ISO/IEC 6523 maintenance agency.
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+      type: object
+    delivery_terms:
+      description: |-
+        EXT-FR-FE-BG-14
+
+        Delivery terms - INCOTERMS
+      properties:
+        incoterms:
+          description: >-
+            EXT-FR-FE-185
+
+
+            Code specifying the delivery type for these commercial delivery
+            conditions.
+
+            To be chosen from the entries in the list UNTDID 4053 + INCOTERMS
+
+            1: Delivery arranged by the supplier (Indicates that the supplier
+            will arrange delivery of the goods).
+
+            2: Delivery arranged by logistic service provider (Code indicating
+            that the logistic service provider has arranged the delivery of
+            goods).
+
+            CFR: Cost and Freight (insert named port of destination)
+
+            CIF: Cost, Insurance and Freight (insert named port of destination)
+
+            CIP: Carriage and Insurance Paid to (insert named place of
+            destination)
+
+            CPT: Carriage Paid To (insert named place of destination)
+
+            DAP: Delivered At Place (insert named place of destination)
+
+            DAT: Delivered At Terminal (insert named terminal at port or place
+            of destination)
+
+            DDP: Delivered Duty Paid (insert named place of destination)
+
+            EXW: Ex Works (insert named place of delivery)
+
+            FAS: Free Alongside Ship (insert named port of shipment)
+
+            FCA: Free Carrier (insert named place of delivery)
+
+            FOB: Free On Board (insert named port of shipment)
+          type: string
+        name:
+          description: |-
+            EXT-FR-FE-186
+
+            Place of delivery. For example a harbour
+          type: string
+      type: object
+    direct_debit:
+      description: >-
+        BG-19
+
+
+        A group of business terms to specify a direct debit.
+
+        This group may be used to give prior notice in the invoice that payment
+        will be made through a SEPA or other direct debit initiated by the
+        Seller, in accordance with the rules of the SEPA or other direct debit
+        scheme.
+      properties:
+        bank_assigned_creditor_identifier:
+          description: >-
+            BT-90
+
+
+            Bank assigned creditor identifier
+
+            Unique banking reference identifier of the Payee or Seller assigned
+            by the Payee or Seller bank.
+
+            Used in order to pre-notify the Buyer of a SEPA direct debit.
+          type: string
+        debited_account_identifier:
+          description: |-
+            BT-91
+
+            Debited account identifier
+            The account to be debited by the direct debit.
+          type: string
+        mandate_reference_identifier:
+          description: >-
+            BT-89
+
+
+            Mandate reference identifier
+
+            Unique identifier assigned by the Payee for referencing the direct
+            debit mandate.
+
+            Used in order to pre-notify the Buyer of a SEPA direct debit.
+          type: string
+      type: object
+    directory:
+      enum:
+        - peppol
+        - ppf
+      type: string
+    directory_entry:
+      properties:
+        company:
+          $ref: "#/components/schemas/company"
+        created_at:
+          format: date-time
+          type: string
+        directory:
+          $ref: "#/components/schemas/directory"
+        id:
+          type: integer
+        identifier:
+          example: 0225:853322915
+          type: string
+        is_replyto:
+          description: '"Reply-to" addresses are technical addresses used in the Peppol
+            network to receive messages linked to a previously sent invoice.
+            They should not be used as a recipient address to send an invoice.'
+          type: boolean
+        status:
+          $ref: "#/components/schemas/directory_entry_status"
+        status_message:
+          type: string
+      required:
+        - company
+        - created_at
+        - directory
+        - id
+        - identifier
+        - status
+      type: object
+    directory_entry_status:
+      enum:
+        - pending
+        - created
+        - error
+      type: string
+    electronic_address:
+      description: >-
+        BT-34, EXT-FR-FE-170
+
+
+        Seller electronic address
+
+        Identifies the Seller's electronic address to which the application
+        level response to the invoice may be delivered.
+
+        Scheme identifier
+
+        The identification scheme identifier of the Seller electronic address.
+
+        The scheme identifier shall be chosen from a list to be maintained by
+        the Connecting Europe Facility.
+
+
+        BT-49
+
+
+        Buyer electronic address
+
+        Identifies the Buyer's electronic address to which the invoice is
+        delivered.
+
+        Scheme identifier
+
+        The identification scheme identifier of the Buyer electronic address.
+
+        The scheme identifier shall be chosen from a list to be maintained by
+        the Connecting Europe Facility.
+
+
+        EXT-FR-FE-29, EXT-FR-FE-30, EXT-FR-FE-12, EXT-FR-FE-13, EXT-FR-FE-52,
+        EXT-FR-FE-53, EXT-FR-FE-75, EXT-FR-FE-76, EXT-FR-FE-98, EXT-FR-FE-99,
+        EXT-FR-FE-121, EXT-FR-FE-122
+
+
+        EXT-FR-FE-29, EXT-FR-FE-30, EXT-FR-FE-12, EXT-FR-FE-13, EXT-FR-FE-52,
+        EXT-FR-FE-53, EXT-FR-FE-75, EXT-FR-FE-76, EXT-FR-FE-98, EXT-FR-FE-99,
+        EXT-FR-FE-121, EXT-FR-FE-122
+      properties:
+        scheme:
+          type: string
+        value:
+          type: string
+      required:
+        - value
+        - scheme
+      type: object
+    en_invoice:
+      description: |-
+        ENInvoice structure is following EN 16931 semantic model
+        - Bibliography
+        - [1]
+        Directive 2014/55/EU of the European Parliament and of The Council of 16 April 2014 on
+        electronic invoicing in public procurement [viewed 2015-07-26] Available from http://eur-
+        lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0055.
+        - [2]
+        COUNCIL DIRECTIVE. 2006/112/EC of 28 November 2006 on the common system of value added
+        tax – last version: 2006L0112 - EN - 01.01.2015 - 016.001 [viewed 2015-07-26] Available from
+        http://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02006L0112-20150101.
+        - [3]
+        Directive 2011/7/EU of the European Parliament and of the Council of 16 February 2011 on
+        combating late payment in commercial transactions [viewed 2015-07-26] Available from
+        http://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:32011L0007.
+        - [4]
+        Directive 95/46/EC of the European Parliament and of the Council of 24 October 1995 on the
+        protection of individuals with regard to the processing of personal data and on the free
+        movement of such data [viewed 2015-07-26]. Available from http://eur-lex.europa.eu/legal-
+        content/EN/TXT/?uri=URISERV:l14012.
+        - [5]
+        COUNCIL DIRECTIVE. 2008/9/EC of 12 February 2008 laying down detailed rules for the refund of
+        value added tax, provided for in Directive 2006/112/EC, to taxable persons not established in
+        the Member State of refund but established in another Member State [viewed 2015-07-
+        26]. Available from http://eur-lex.europa.eu/legal-
+        content/EN/TXT/?uri=CELEX:32008L0009&qid=1437940645512.
+        - [6]
+        United Nations Trade Data Interchange Directory (UNTDID)
+        http://www.unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tredi2.htm
+        - [7]
+        UN/ECE Recommendation N° 20 “Codes for Units of Measure Used in International
+        Trade” [viewed 2015-07-26]. Available from
+        http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_
+        latest_08052015.zip.
+        - [8]
+        Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on
+        electronic identification and trust services for electronic transactions in the internal market and
+        repealing Directive 1999/93/EC [viewed 2015-07-26]. Available from http://eur-
+        lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0910.
+        - [9]
+        European Interoperability Framework (EIF) for European public services [viewed 2015-07-26].
+        Available from http://ec.europa.eu/isa/documents/isa_annex_ii_eif_en.pdf.
+        - [10]
+        ANNEX TO THE COMMISSION IMPLEMENTING DECISION C. (2014)7912 final of 10 December 2014 on a
+        standardisation request to the European standardisation organizations as regards a European
+        standard on electronic invoicing and a set of ancillary standardisation deliverables pursuant to
+        Regulation (EU) No 1025/2012 of the European Parliament and of the Council [viewed 2015-07-
+        26]. Available from
+        http://ec.europa.eu/DocsRoom/documents/8650/attachments/1/translations/en/renditions/
+        pdf.I.S. EN 16931-1:2017+A1:2019&AC:2020
+        EN 16931-1:2017+A1:2019 (E)
+        - [11]
+        COUNCIL DIRECTIVE. 2008/118/EC concerning the general arrangements for excise duty and
+        repealing Directive 92/12/EEC [viewed 2015-08-03]. Available from http://eur-
+        lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2009:009:0012:0030:EN:PDF.
+        - [12]
+        Object Management Group - Business Process Model and Notation v2,
+        http://www.omg.org/spec/BPMN/2.0/
+        - [13]
+        SEPA Credit Transfer Scheme Implementation Guide
+        http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-
+        credit-transfer-scheme-customer-to-bank-implementation-guidelines-version-8/epc132-08-
+        c2b-ctig-v80-approvedpdf/
+        - [14]
+        SEPA Direct Debit Scheme Implementation Guide
+        http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-
+        direct-debit-core-scheme-customer-to-bank-implementation-guidelines-version-8/epc130-08-
+        sdd-core-c2b-ig-v80-approvedpdf/
+        - [15]
+        CLARIFICATION E.P.C. Paper on the Use of Slashes in References, Identifications and Identifiers
+        http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-
+        credit-transfer-scheme-customer-to-bank-implementation-guidelines-version-8/epc230-15-
+        clarification-paper-on-the-use-of-slashes-in-references-identifications-and-identifierspdf/
+        - [16]
+        http://www.iso.org/iso/catalogue_detail.htm?csnumber=50649
+        - [17]
+        http://www.eact.eu/docs/EACT_Standard_for_Remittance_Info.pdf
+        - [18]
+        TOGAF architecture compliance. Available from
+        http://pubs.opengroup.org/architecture/togaf9-doc/arch/chap48.html
+        - [19]
+        UN/ECE Recommendation N°. 21 - Codes for Passengers, Types of Cargo, Packages and
+        Packaging Materials (with Complementary Codes for Package Names)
+        http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec21/rec21.zip
+        - [20]
+        ISO 639-2, Codes for the representation of names of languages — Part 2: Alpha-3 code
+      properties:
+        additional_supporting_documents:
+          description: >-
+            BG-24
+
+
+            A group of business terms providing information about additional
+            supporting documents substantiating the claims made in the Invoice.
+
+            The additional supporting documents can be used for both referencing
+            a document number which is expected to be known by the receiver, an
+            external document (referenced by a URL) or as an embedded document
+            (such as a time report in pdf). The option to link to an external
+            document will be needed, for example in the case of large
+            attachments and/or when sensitive information, e.g. person-related
+            services, has to be separated from the Invoice itself.
+          items:
+            $ref: "#/components/schemas/additional_supporting_document"
+          type: array
+        addressed_to:
+          $ref: "#/components/schemas/extension_contact"
+        buyer:
+          $ref: "#/components/schemas/buyer"
+        buyer_accounting_reference:
+          description: >-
+            BT-19
+
+
+            Buyer accounting reference
+
+            A textual value that specifies where to book the relevant data into
+            the Buyer's financial accounts.
+          type: string
+        buyer_agent:
+          $ref: "#/components/schemas/extension_contact"
+        buyer_reference:
+          description: >-
+            BT-10
+
+
+            Buyer reference
+
+            An identifier assigned by the Buyer used for internal routing
+            purposes.
+
+            The identifier is defined by the Buyer (e.g. contact ID, department,
+            office id, project code), but provided by the Seller in the Invoice.
+          type: string
+        charges:
+          description: >-
+            BG-21
+
+
+            A group of business terms providing information about charges and
+            taxes other than VAT, applicable to the Invoice as a whole.
+          items:
+            $ref: "#/components/schemas/invoice_allowance_or_charge"
+          type: array
+        contract_reference:
+          description: >-
+            BT-12
+
+
+            Contract reference
+
+            The identification of a contract.
+
+            The contract identifier should be unique in the context of the
+            specific trading relationship and for a defined time period.
+          type: string
+        contract_type:
+          description: |-
+            EXT-FR-FE-01
+
+            Type de contrat
+          type: string
+        currency_code:
+          $ref: "#/components/schemas/currency_code"
+        deliver_to_address:
+          $ref: "#/components/schemas/postal_address"
+        delivery_information:
+          $ref: "#/components/schemas/delivery_information"
+        delivery_terms:
+          $ref: "#/components/schemas/delivery_terms"
+        despatch_advice_reference:
+          description: |-
+            BT-16
+
+            Despatch advice reference
+            An identifier of a referenced despatch advice.
+          type: string
+        document_level_allowances:
+          description: >-
+            BG-20
+
+
+            A group of business terms providing information about allowances
+            applicable to the Invoice as a whole.
+
+            Deductions, such as withheld tax may also be specified in this
+            group.
+          items:
+            $ref: "#/components/schemas/invoice_allowance_or_charge"
+          type: array
+        invoiced_object_identifier_scheme:
+          deprecated: true
+          description: >-
+            BT-18-1
+
+
+            Scheme identifier
+
+            The identification scheme identifier of the Invoiced object
+            identifier.
+
+            If it may be not clear for the receiver what scheme is used for the
+            identifier, a conditional scheme identifier should be used that
+            shall be chosen from the UNTDID 1153 code list [6] entries.
+
+            Deprecated: Use InvoicedObjectIdentifiers instead
+          type: string
+        invoiced_object_identifier_value:
+          deprecated: true
+          description: >-
+            BT-18
+
+
+            Invoiced object identifier
+
+            An identifier for an object on which the invoice is based, given by
+            the Seller.
+
+            It may be a subscription number, telephone number, meter point,
+            vehicle, person etc., as applicable.
+
+            Deprecated: Use InvoicedObjectIdentifiers instead
+          type: string
+        invoiced_object_identifiers:
+          description: >-
+            BT-18
+
+
+            InvoicedObjectIdentifiers
+
+            A list of identifers for objets on which the invoice is based, given
+            by the Seller.
+
+            Each object is composed of a value and a scheme
+
+            - Value : It may be a susbscription number, telephone number, meter
+            point, vehiclen person etc., as applicable.
+
+            - Scheme: If it may be not clear for the receiver what scheme is
+            used for the identifier, a conditional scheme identifier should be
+            used that shall be chosen from the UNTDID 1153 code list [6]
+            entries.
+          items:
+            $ref: "#/components/schemas/invoiced_object_identifier"
+          type: array
+        invoicing_period:
+          $ref: "#/components/schemas/invoicing_period"
+        issue_date:
+          description: |-
+            BT-2
+
+            Invoice issue date
+            The date when the Invoice was issued.
+          format: date
+          type: string
+        lines:
+          description: >-
+            BG-25
+
+
+            A group of business terms providing information on individual
+            Invoice lines.
+          items:
+            $ref: "#/components/schemas/invoice_line"
+          type: array
+        notes:
+          description: >-
+            BG-1
+
+
+            A group of business terms providing textual notes that are relevant
+            for the invoice, together with an indication of the note subject
+          items:
+            $ref: "#/components/schemas/invoice_note"
+          type: array
+        number:
+          description: >-
+            BT-1
+
+
+            Invoice number
+
+            A unique identification of the Invoice.
+
+            The sequential number required in Article 226(2) of the directive
+            2006/112/EC [2], to uniquely identify the Invoice within the
+            business context, time-frame, operating systems and records of the
+            Seller. It may be based on one or more series of numbers, which may
+            include alphanumeric characters. No identification scheme is to be
+            used.
+          type: string
+        payee:
+          $ref: "#/components/schemas/payee"
+        payer:
+          $ref: "#/components/schemas/extension_contact"
+        payment_due_date:
+          description: >-
+            BT-9
+
+
+            Payment due date
+
+            The date when the payment is due.
+
+            The payment due date reflects the due date of the net payment. For
+            partial payments it states the first net due date. The corresponding
+            description of more complex payment terms can be stated in BT-20
+            Payment terms.
+          format: date
+          type: string
+        payment_instructions:
+          $ref: "#/components/schemas/payment_instructions"
+        payment_terms:
+          description: >-
+            BT-20
+
+
+            Payment terms
+
+            A textual description of the payment terms that apply to the amount
+            due for payment (Including description of possible penalties).
+
+            This element may contain multiple lines and multiple terms.
+          type: string
+        preceding_invoice_references:
+          description: >-
+            BG-3
+
+
+            A group of business terms providing information on one or more
+            preceding Invoices.
+
+            To be used in case:
+
+            - a preceding invoice is corrected
+
+            - preceding partial invoices are referred to from a final invoice
+
+            - preceding pre-payment invoices are referred to from a final
+            invoice
+          items:
+            $ref: "#/components/schemas/preceding_invoice_reference"
+          type: array
+        process_control:
+          $ref: "#/components/schemas/process_control"
+        project_reference:
+          description: |-
+            BT-11
+
+            Project reference
+            The identification of the project the invoice refers to
+          type: string
+        purchase_order_reference:
+          description: |-
+            BT-13
+
+            Purchase order reference
+            An identifier of a referenced purchase order, issued by the Buyer.
+          type: string
+        receiving_advice_reference:
+          description: |-
+            BT-15
+
+            Receiving advice reference
+            An identifier of a referenced receiving advice.
+          type: string
+        sales_order_reference:
+          description: |-
+            BT-14
+
+            Sales order reference
+            An identifier of a referenced sales order, issued by the Seller.
+          type: string
+        seller:
+          $ref: "#/components/schemas/seller"
+        seller_agent:
+          $ref: "#/components/schemas/extension_contact"
+        seller_tax_representative_party:
+          $ref: "#/components/schemas/seller_tax_representative_party"
+        tender_or_lot_reference:
+          description: >-
+            BT-17
+
+
+            Tender or lot reference
+
+            The identification of the call for tender or lot the invoice relates
+            to.
+
+            In some countries a reference to the call for tender that has led to
+            the contract shall be provided.
+          type: string
+        third_party_biller:
+          $ref: "#/components/schemas/extension_contact"
+        totals:
+          $ref: "#/components/schemas/totals"
+        type_code:
+          $ref: "#/components/schemas/invoice_type_code"
+        vat_accounting_currency_code:
+          $ref: "#/components/schemas/currency_code"
+        vat_break_down:
+          description: >-
+            BG-23
+
+
+            A group of business terms providing information about VAT breakdown
+            by different categories, rates and exemption reasons
+          items:
+            $ref: "#/components/schemas/vat_break_down"
+          type: array
+        vat_point_date:
+          description: >-
+            BT-7
+
+
+            Value added tax point date
+
+            The date when the VAT becomes accountable for the Seller and for the
+            Buyer in so far as that date can be determined and differs from the
+            date of issue of the invoice, according to the VAT directive.
+
+            The tax point is usually the date goods were supplied or services
+            completed (the 'basic tax point'). There are some variations. Please
+            refer to Article 226 (7) of the Council Directive 2006/112/EC [2]
+            for more information. This element is required if the Value added
+            tax point date is different from the Invoice issue date. Both Buyer
+            and Seller should use the Tax Point Date when provided by the
+            Seller. The use of BT-7 and BT-8 is mutually exclusive.
+          format: date
+          type: string
+        vat_point_date_code:
+          description: >-
+            BT-8
+
+
+            Value added tax point date code
+
+            The code of the date when the VAT becomes accountable for the Seller
+            and for the Buyer.
+
+            The code shall distinguish between the following entries of UNTDID
+            2005 [6]: - Invoice document issue date - Delivery date, actual -
+            Paid to dateThe Value added tax point date code is used if the Value
+            added tax point date is not known when the invoice is issued. The
+            use of BT-8 and BT-7 is mutually exclusive.
+          type: string
+      required:
+        - number
+        - issue_date
+        - type_code
+        - currency_code
+        - process_control
+        - seller
+        - buyer
+        - totals
+        - vat_break_down
+        - lines
+      type: object
+    en_invoice_overview:
+      description: ENInvoiceOverview is the same structure as ENInvoice, except some
+        fields are optional (buyer, lines and seller)
+      properties:
+        additional_supporting_documents:
+          items:
+            $ref: "#/components/schemas/additional_supporting_document"
+          type: array
+        addressed_to:
+          $ref: "#/components/schemas/extension_contact"
+        buyer:
+          $ref: "#/components/schemas/buyer"
+        buyer_accounting_reference:
+          type: string
+        buyer_agent:
+          $ref: "#/components/schemas/extension_contact"
+        buyer_reference:
+          type: string
+        charges:
+          items:
+            $ref: "#/components/schemas/invoice_allowance_or_charge"
+          type: array
+        contract_reference:
+          type: string
+        contract_type:
+          type: string
+        currency_code:
+          $ref: "#/components/schemas/currency_code"
+        deliver_to_address:
+          $ref: "#/components/schemas/postal_address"
+        delivery_information:
+          $ref: "#/components/schemas/delivery_information"
+        despatch_advice_reference:
+          type: string
+        document_level_allowances:
+          items:
+            $ref: "#/components/schemas/invoice_allowance_or_charge"
+          type: array
+        invoiced_object_identifier_scheme:
+          type: string
+        invoiced_object_identifier_value:
+          type: string
+        invoiced_object_identifiers:
+          items:
+            $ref: "#/components/schemas/invoiced_object_identifier"
+          type: array
+        invoicing_period:
+          $ref: "#/components/schemas/invoicing_period"
+        issue_date:
+          format: date
+          type: string
+        lines:
+          items:
+            $ref: "#/components/schemas/invoice_line"
+          type: array
+        notes:
+          items:
+            $ref: "#/components/schemas/invoice_note"
+          type: array
+        number:
+          type: string
+        payee:
+          $ref: "#/components/schemas/payee"
+        payer:
+          $ref: "#/components/schemas/extension_contact"
+        payment_due_date:
+          format: date
+          type: string
+        payment_instructions:
+          $ref: "#/components/schemas/payment_instructions"
+        payment_terms:
+          type: string
+        preceding_invoice_references:
+          items:
+            $ref: "#/components/schemas/preceding_invoice_reference"
+          type: array
+        process_control:
+          $ref: "#/components/schemas/process_control"
+        project_reference:
+          type: string
+        purchase_order_reference:
+          type: string
+        receiving_advice_reference:
+          type: string
+        sales_order_reference:
+          type: string
+        seller:
+          $ref: "#/components/schemas/seller"
+        seller_agent:
+          $ref: "#/components/schemas/extension_contact"
+        seller_tax_representative_party:
+          $ref: "#/components/schemas/seller_tax_representative_party"
+        tender_or_lot_reference:
+          type: string
+        third_party_biller:
+          $ref: "#/components/schemas/extension_contact"
+        totals:
+          $ref: "#/components/schemas/totals"
+        type_code:
+          $ref: "#/components/schemas/invoice_type_code"
+        vat_accounting_currency_code:
+          $ref: "#/components/schemas/currency_code"
+        vat_break_down:
+          items:
+            $ref: "#/components/schemas/vat_break_down"
+          type: array
+        vat_point_date:
+          format: date
+          type: string
+        vat_point_date_code:
+          type: string
+      required:
+        - number
+        - issue_date
+        - type_code
+        - currency_code
+        - process_control
+        - totals
+        - vat_break_down
+      type: object
+    event:
+      properties:
+        attachments:
+          items:
+            properties:
+              file_name:
+                type: string
+              index:
+                type: integer
+            type: object
+          type: array
+        created_at:
+          format: date-time
+          type: string
+        data:
+          type: object
+        details:
+          items:
+            $ref: "#/components/schemas/invoice_event_detail"
+          type: array
+        id:
+          type: integer
+        invoice_id:
+          type: integer
+        status_code:
+          $ref: "#/components/schemas/status_code"
+        status_text:
+          type: string
+      required:
+        - id
+        - invoice_id
+        - status_code
+        - created_at
+        - status_text
+      type: object
+    extension_contact:
+      description: |-
+        EXT-FR-FE-BG-01
+
+        EXT-FR-FE-BG-02
+
+        EXT-FR-FE-BG-03
+
+        EXT-FR-FE-BG-04
+
+        EXT-FR-FE-BG-05
+      properties:
+        contact_point:
+          description: >-
+            BT-41, BT-56, EXT-FR-FE-23, EXT-FR-FE-40, EXT-FR-FE-63,
+            EXT-FR-FE-86, EXT-FR-FE-109, EXT-FR-FE-132
+
+
+            A contact point for a legal entity or person.
+
+            Such as person name, contact identification, department or office
+            identification.
+          type: string
+        department_name:
+          description: BT-41-0 Only in CII
+          type: string
+        electronic_address:
+          $ref: "#/components/schemas/electronic_address"
+        email_address:
+          description: >-
+            BT-43, BT-58, EXT-FR-FE-25, EXT-FR-FE-42, EXT-FR-FE-65,
+            EXT-FR-FE-88, EXT-FR-FE-111, EXT-FR-FE-134
+
+
+            An e-mail address for the contact point.
+          type: string
+        identifiers:
+          description: // EXT-FR-FE-06, EXT-FR-FE-07, EXT-FR-FE-46, EXT-FR-FE-47,
+            EXT-FR-FE-69, EXT-FR-FE-70, EXT-FR-FE-92, EXT-FR-FE-92-1,
+            EXT-FR-FE-115, EXT-FR-FE-116
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        name:
+          description: BT-27, BT-44, BT-59, EXT-FR-FE-03, EXT-FR-FE-43, EXT-FR-FE-66,
+            EXT-FR-FE-89, EXT-FR-FE-112
+          type: string
+        phone_number:
+          description: >-
+            BT-42, BT-57, EXT-FR-FE-24, EXT-FR-FE-41, EXT-FR-FE-64,
+            EXT-FR-FE-87, EXT-FR-FE-110, EXT-FR-FE-133
+
+
+            A phone number for the contact point.
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+        role_code:
+          description: EXT-FR-FE-04, EXT-FR-FE-44, EXT-FR-FE-67, EXT-FR-FE-90, EXT-FR-FE-113
+          type: string
+        siren_identifier:
+          $ref: "#/components/schemas/legal_registration_identifier"
+        trading_name:
+          description: EXT-FR-FE-05, EXT-FR-FE-45, EXT-FR-FE-68, EXT-FR-FE-91, EXT-FR-FE-114
+          type: string
+        vat_identifier:
+          description: BT-31, BT-48, EXT-FR-FE-27, EXT-FR-FE-28, EXT-FR-FE-10,
+            EXT-FR-FE-11, EXT-FR-FE-50, EXT-FR-FE-51, EXT-FR-FE-73,
+            EXT-FR-FE-74, EXT-FR-FE-96, EXT-FR-FE-97, EXT-FR-FE-119,
+            EXT-FR-FE-120
+          type: string
+      required:
+        - name
+        - identifiers
+        - vat_identifier
+        - electronic_address
+        - role_code
+        - trading_name
+        - siren_identifier
+        - postal_address
+      type: object
+    generate_test_invoice_format:
+      description: |-
+        Invoice format can be
+
+        1. `cii`: official format, defined as xml
+        2. `ubl`: official format, defined as xml
+        3. `en16931`: format defined in schema `en_invoice`, as json data
+      enum:
+        - cii
+        - ubl
+        - en16931
+        - ubl-peppol-bis
+      type: string
+    http_ko:
+      description: The request failed
+      properties:
+        code:
+          description: unique code describing the error
+          type: integer
+        http_status_code:
+          type: integer
+        message:
+          description: human description of the message. Do not use programmaticaly, there
+            is no backward compatibility about it
+          type: string
+      required:
+        - http_satus_code
+        - message
+      type: object
+    identifier:
+      properties:
+        scheme:
+          type: string
+        value:
+          type: string
+      required:
+        - value
+        - scheme
+      type: object
+    invoice:
+      description: The invoice structure
+      properties:
+        company_id:
+          type: integer
+        created_at:
+          format: date-time
+          type: string
+        direction:
+          enum:
+            - in
+            - out
+          type: string
+        en_invoice:
+          $ref: "#/components/schemas/en_invoice"
+        events:
+          items:
+            $ref: "#/components/schemas/event"
+          type: array
+        id:
+          description: the invoice id
+          type: integer
+      required:
+        - id
+        - company_id
+        - created_at
+        - direction
+      type: object
+    invoice_allowance_or_charge:
+      properties:
+        amount:
+          description: |-
+            BT-92, BT-99, BT-136, BT-141
+
+            Document level allowance/charge amount
+            The amount of an allowance/charge, without VAT.
+          format: decimal
+          type: string
+        base_amount:
+          description: >-
+            BT-93, BT-100, BT-137, BT-142
+
+
+            Document level allowance/charge base amount
+
+            The base amount that may be used, in conjunction with the document
+            level allowance/charge percentage, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        percent:
+          description: >-
+            BT-94, BT-101, BT-138, BT-143
+
+
+            Document level allowance/charge percentage
+
+            The percentage that may be used, in conjunction with the document
+            level allowance/charge base amount, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        reason:
+          description: >-
+            BT-97, BT-104, BT-139, BT-144
+
+
+            Document level allowance/charge reason
+
+            The reason for the document level allowance/charge, expressed as
+            text.
+          type: string
+        reason_code:
+          $ref: "#/components/schemas/reason_code"
+        vat_category_code:
+          $ref: "#/components/schemas/vat_category_code"
+        vat_identifier:
+          description: |-
+            BT-95-0, BT-102-0
+
+            VAT identifier qualifier for the discount at document level
+          type: string
+        vat_rate:
+          description: >-
+            BT-96, BT-103
+
+
+            Document level allowance/charge VAT rate
+
+            The VAT rate, represented as percentage that applies to the document
+            level allowance/charge.
+          format: decimal
+          type: string
+      required:
+        - vat_category_code
+        - amount
+      type: object
+    invoice_event_amount:
+      properties:
+        currency_code:
+          description: The ISO 4217 currency code of the amount, for example 'EUR'.
+          type: string
+        net_amount:
+          format: decimal
+          type: string
+        type_code:
+          description: TypeCode (MDT-207). Describes the amount category, for example
+            'MEN' for the net received amount. See also BR-FR-CDV-CL-11.
+          type: string
+        vat_rate:
+          description: VAT rate in percentage, for example '20.0'.
+          format: decimal
+          type: string
+      required:
+        - vat_rate
+        - net_amount
+        - currency_code
+        - type_code
+      type: object
+    invoice_event_attachment:
+      properties:
+        content:
+          format: byte
+          type: string
+        filename:
+          type: string
+      required:
+        - content
+      type: object
+    invoice_event_detail:
+      properties:
+        amounts:
+          items:
+            $ref: "#/components/schemas/invoice_event_amount"
+          type: array
+        reason:
+          description: ReasonCode (MDT-113). See AFNOR XP Z12-012 for the list of allowed
+            values.
+          type: string
+    invoice_line:
+      properties:
+        additional_reference_previous_invoice_line:
+          $ref: "#/components/schemas/additional_reference_previous_invoice_line"
+        allowances:
+          description: >-
+            BG-27
+
+
+            A group of business terms providing information about allowances
+            applicable to the individual Invoice line.
+          items:
+            $ref: "#/components/schemas/invoice_line_allowance_or_charge"
+          type: array
+        buyer_accounting_reference:
+          description: >-
+            BT-133
+
+
+            Invoice line Buyer accounting reference
+
+            A textual value that specifies where to book the relevant data into
+            the Buyer's financial accounts.
+
+            If required, this reference shall be provided by the Buyer to the
+            Seller prior to the issuing of the Invoice.
+          type: string
+        charges:
+          description: >-
+            BG-28
+
+
+            A group of business terms providing information about charges and
+            taxes other than VAT applicable to the individual Invoice line.
+
+            All charges and taxes are assumed to be liable to the same VAT rate
+            as the Invoice line.
+          items:
+            $ref: "#/components/schemas/invoice_line_allowance_or_charge"
+          type: array
+        delivery_address:
+          $ref: "#/components/schemas/line_delivery_address"
+        identifier:
+          description: |-
+            BT-126
+
+            Invoice line identifier
+            A unique identifier for the individual line within the Invoice.
+          type: string
+        invoiced_quantity:
+          description: >-
+            BT-129
+
+
+            Invoiced quantity
+
+            The quantity of items (goods or services) that is charged in the
+            Invoice line.
+          format: decimal
+          type: string
+        invoiced_quantity_code:
+          $ref: "#/components/schemas/unit_code"
+        item_information:
+          $ref: "#/components/schemas/item_information"
+        line_vat_accounting_currency:
+          description: |-
+            EXT-FR-FE-182-1
+
+            Accounting currency for the VAT Amount of the invoice line
+          type: string
+        line_vat_amount:
+          description: |-
+            EXT-FR-FE-181
+
+            VAT amount of invoice line in invoice currency
+          format: decimal
+          type: string
+        line_vat_amount_accounting_currency:
+          description: |-
+            EXT-FR-FE-182
+
+            VAT amount of the invoice line in the accounting currency
+          format: decimal
+          type: string
+        line_vat_currency:
+          description: |-
+            EXT-FR-FE-181-1
+
+            Currency of the VAT Amount of the invoice line
+          type: string
+        line_with_vat_net_amount:
+          description: |-
+            EXT-FR-FE-184
+
+            Total amount with VAT of the invoice line
+          format: decimal
+          type: string
+        net_amount:
+          description: >-
+            BT-131
+
+
+            Invoice line net amount
+
+            The total amount of the Invoice line.
+
+            The amount is “net” without VAT, i.e. inclusive of line level
+            allowances and charges as well as other relevant taxes.
+          format: decimal
+          type: string
+        notes:
+          description: >-
+            BT-127
+
+
+            Invoice line note
+
+            A textual note that gives unstructured information that is relevant
+            to the Invoice line.
+          items:
+            $ref: "#/components/schemas/invoice_line_note"
+          type: array
+        object_identifier:
+          description: >-
+            BT-128
+
+
+            Invoice line object identifier
+
+            An identifier for an object on which the invoice line is based,
+            given by the Seller.
+
+            It may be a subscription number, telephone number, meter point etc.,
+            as applicable.
+
+            Scheme identifier
+
+            The identification scheme identifier of the Invoice line object
+            identifier.
+
+            If it may be not clear for the receiver what scheme is used for the
+            identifier, a conditional scheme identifier should be used that
+            shall be chosen from the UNTDID 1153 code list [6] entries.
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        parent_identifier:
+          description: >-
+            EXT-FR-FE-162
+
+
+            Parent line identifier
+
+            Identifier of the parent line to which this line is attached (in
+            case of sub-line)
+          type: string
+        period:
+          $ref: "#/components/schemas/invoicing_period"
+        price_details:
+          $ref: "#/components/schemas/price_details"
+        purchase_order_reference_from_buyer:
+          description: EXT-FR-FE-135
+          type: string
+        real_delivery_date:
+          description: EXT-FR-FE-158, EXT-FR-FE-BG-11
+          format: date
+          type: string
+        receipt_voucher:
+          $ref: "#/components/schemas/line_identifier"
+        referenced_purchase_order_line_reference:
+          description: >-
+            BT-132
+
+
+            Referenced purchase order line reference
+
+            An identifier for a referenced line within a purchase order, issued
+            by the Buyer.
+
+            The purchase order identifier is referenced on document level.
+          type: string
+        sales_order:
+          $ref: "#/components/schemas/line_identifier"
+        seller:
+          $ref: "#/components/schemas/seller"
+        shipping_notice:
+          $ref: "#/components/schemas/line_identifier"
+        subtype:
+          description: >-
+            EXT-FR-FE-163
+
+
+            Line type which allows you to determine if the line data is to be
+            used for calculating the invoice
+
+            Value to choose between the following values:
+
+            - DETAIL: standard line or sub-line, taken into account in the
+            calculations of totals and VAT detail
+
+            - GROUP: grouping line, to which child lines refer. Certain
+            mandatory one-line references are no longer mandatory. If the line
+            total excluding tax (BT-131) is entered, it must be equal to the sum
+            of the line totals excluding tax of the sub-lines.
+
+            - INFORMATION: line with data for information, not taken into
+            account in the calculations
+          type: string
+        vat_information:
+          $ref: "#/components/schemas/line_vat_information"
+      required:
+        - identifier
+        - invoiced_quantity
+        - invoiced_quantity_code
+        - net_amount
+        - price_details
+        - vat_information
+        - item_information
+      type: object
+    invoice_line_allowance_or_charge:
+      properties:
+        amount:
+          description: |-
+            BT-92, BT-99, BT-136, BT-141
+
+            Document level allowance/charge amount
+            The amount of an allowance/charge, without VAT.
+          format: decimal
+          type: string
+        base_amount:
+          description: >-
+            BT-93, BT-100, BT-137, BT-142
+
+
+            Document level allowance/charge base amount
+
+            The base amount that may be used, in conjunction with the document
+            level allowance/charge percentage, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        percent:
+          description: >-
+            BT-94, BT-101, BT-138, BT-143
+
+
+            Document level allowance/charge percentage
+
+            The percentage that may be used, in conjunction with the document
+            level allowance/charge base amount, to calculate the document level
+            allowance/charge amount.
+          format: decimal
+          type: string
+        reason:
+          description: >-
+            BT-97, BT-104, BT-139, BT-144
+
+
+            Document level allowance/charge reason
+
+            The reason for the document level allowance/charge, expressed as
+            text.
+          type: string
+        reason_code:
+          $ref: "#/components/schemas/reason_code"
+      required:
+        - amount
+      type: object
+    invoice_line_note:
+      properties:
+        note:
+          description: BT-127
+          type: string
+        subject_code:
+          $ref: "#/components/schemas/invoice_note_code"
+      required:
+        - subject_code
+        - note
+      type: object
+    invoice_note:
+      properties:
+        note:
+          description: >-
+            BT-22
+
+
+            Invoice note
+
+            A textual note that gives unstructured information that is relevant
+            to the Invoice as a whole.
+
+            Such as the reason for any correction or assignment note in case the
+            invoice has been factored
+          type: string
+        subject_code:
+          $ref: "#/components/schemas/invoice_note_code"
+      required:
+        - note
+      type: object
+    invoice_note_code:
+      description: |-
+        BT-21
+
+        Invoice note subject code
+        The subject of the textual note in BT-22.
+        To be chosen from the entries in UNTDID 4451 [6].
+
+        EXT-FR-FE-183
+      type: string
+    invoice_overview:
+      description: The invoice overview is the top level object of invoice. For more
+        detail, check the invoice structure
+      properties:
+        company_id:
+          type: integer
+        created_at:
+          format: date-time
+          type: string
+        en_invoice:
+          $ref: "#/components/schemas/en_invoice_overview"
+        events:
+          items:
+            $ref: "#/components/schemas/event"
+          type: array
+        id:
+          description: the invoice id
+          type: integer
+      required:
+        - id
+        - company_id
+        - created_at
+      type: object
+    invoice_type_code:
+      description: >-
+        BT-3
+
+
+        Invoice type code
+
+        A code specifying the functional type of the Invoice.
+
+        Commercial invoices and credit notes are defined according the entries
+        in UNTDID 1001 [6]. Other entries of UNTDID 1001 [6] with specific
+        invoices or credit notes may be used if applicable.
+
+
+        EXT-FR-FE-02
+
+
+        Type de facture antérieure
+
+        UNTDID 1001
+
+        BR-FR-04
+
+        Code spécifiant le type fonctionnel de la Facture antérieure
+
+
+        EXT-FR-FE-137
+      type: integer
+    invoiced_object_identifier:
+      type: object
+    invoicing_period:
+      description: >-
+        BG-14
+
+
+        A group of business terms providing information on the invoice period.
+
+        Used to indicate when the period covered by the invoice starts and when
+        it ends. Also called delivery period.
+
+
+        BG-26
+
+
+        A group of business terms providing information about the period
+        relevant for the Invoice line.
+
+        Is also called Invoice line delivery period.
+      properties:
+        end_date:
+          description: |-
+            BT-74, BT-135
+
+            The date when the Invoice period ends.
+            The date on which the delivery of goods or services was completed.
+          format: date
+          type: string
+        start_date:
+          description: |-
+            BT-73, BT-134
+
+            The date when the Invoice period starts.
+            The initial date of delivery of goods or services.
+          format: date
+          type: string
+      type: object
+    item_attribute:
+      properties:
+        code:
+          description: |-
+            EXT-FR-FE-159
+
+            Item attribute code
+            Code to qualify the article attribute
+            Example: BRL for a CO2 measurement
+          type: string
+        name:
+          description: |-
+            BT-160
+
+            Item attribute name
+            The name of the attribute or property of the item.
+            Such as “Colour”.
+          type: string
+        quantity:
+          description: |-
+            EXT-FR-FE-160
+
+            Value with measure unit
+          format: decimal
+          type: string
+        quantity_unit:
+          description: EXT-FR-FE-161
+          type: string
+        value:
+          description: |-
+            BT-161
+
+            Item attribute value
+            The value of the attribute or property of the item.
+            Such as “Red”.
+          type: string
+      required:
+        - value
+      type: object
+    item_information:
+      description: >-
+        BG-31
+
+
+        A group of business terms providing information about the goods and
+        services invoiced.
+      properties:
+        attributes:
+          description: >-
+            BG-32
+
+
+            A group of business terms providing information about properties of
+            the goods and services invoiced.
+          items:
+            $ref: "#/components/schemas/item_attribute"
+          type: array
+        buyer_identifier:
+          description: |-
+            BT-156
+
+            Item Buyer's identifier
+            An identifier, assigned by the Buyer, for the item.
+          type: string
+        classification_identifier:
+          description: BT-158
+          items:
+            $ref: "#/components/schemas/classification_identifier"
+          type: array
+        country_of_origin:
+          description: >-
+            BT-159
+
+
+            Item country of origin
+
+            The code identifying the country from which the item originates.
+
+            The lists of valid countries are registered with the EN ISO 3166-1
+            Maintenance agency, “Codes for the representation of names of
+            countries and their subdivisions”.
+          type: string
+        description:
+          description: >-
+            BT-154
+
+
+            Item description
+
+            A description for an item.
+
+            The Item description allows for describing the item and its features
+            in more detail than the Item name.
+          type: string
+        name:
+          description: |-
+            BT-153
+
+            Item name
+            A name for an item.
+          type: string
+        seller_identifier:
+          description: |-
+            BT-155
+
+            Item Seller's identifier
+            An identifier, assigned by the Seller, for the item.
+          type: string
+        standard_identifier_scheme:
+          description: |-
+            BT-157-1
+
+            Scheme identifier
+            The identification scheme identifier of the Item standard identifier
+          type: string
+        standard_identifier_value:
+          description: |-
+            BT-157
+
+            Item standard identifier
+            An item identifier based on a registered scheme.
+          type: string
+      required:
+        - name
+      type: object
+    legal_registration_identifier:
+      description: >-
+        BT-30, EXT-FR-FE-167
+
+
+        Seller legal registration identifier
+
+        An identifier issued by an official registrar that identifies the Seller
+        as a legal entity or person.
+
+        If no identification scheme is specified, it should be known by Buyer
+        and Seller.
+
+        Scheme identifier
+
+        The identification scheme identifier of the Seller legal registration
+        identifier.
+
+        If used, the identification scheme shall be chosen from the entries of
+        the list published by the ISO/IEC 6523 maintenance agency.
+
+
+        BT-47
+
+
+        Buyer legal registration identifier
+
+        An identifier issued by an official registrar that identifies the Buyer
+        as a legal entity or person.
+
+        If no identification scheme is specified, it should be known by Buyer
+        and Seller, e.g. the identifier that is exclusively used in the
+        applicable legal environment.
+
+        Scheme identifier
+
+        The identification scheme identifier of the Buyer legal registration
+        identifier.
+
+        If used, the identification scheme shall be chosen from the entries of
+        the list published by the ISO/IEC 6523 maintenance agency.
+
+
+        EXT-FR-FE-08, EXT-FR-FE-09, EXT-FR-FE-48, EXT-FR-FE-49, EXT-FR-FE-71,
+        EXT-FR-FE-72, EXT-FR-FE-94, EXT-FR-FE-95, EXT-FR-FE-117, EXT-FR-FE-118
+
+
+        BT-61
+
+
+        Payee legal registration identifier
+
+        An identifier issued by an official registrar that identifies the Payee
+        as a legal entity or person.
+
+        If no scheme is specified, it should be known by Buyer and Seller, e.g.
+        the identifier that is exclusively used in the applicable legal
+        environment.
+
+        Scheme identifier
+
+        The identification scheme identifier of the Payee legal registration
+        identifier.
+
+        If used, the identification scheme shall be chosen from the entries of
+        the list published by the ISO/IEC 6523 maintenance agency.
+      properties:
+        scheme:
+          type: string
+        value:
+          type: string
+      required:
+        - value
+        - scheme
+      type: object
+    line_delivery_address:
+      description: EXT-FR-FE-BG-10
+      properties:
+        delivery_place_identifier:
+          description: EXT-FR-FE-146, EXT-FR-FE-148
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        delivery_place_name:
+          description: EXT-FR-FE-149
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+      required:
+        - delivery_place_identifier
+        - delivery_place_name
+        - postal_address
+      type: object
+    line_identifier:
+      description: |-
+        EXT-FR-FE-BG-07
+
+        EXT-FR-FE-BG-08
+
+        EXT-FR-FE-BG-09
+      properties:
+        identifier:
+          description: EXT-FR-FE-140, EXT-FR-FE-142, EXT-FR-FE-144
+          type: string
+        line_identifier:
+          description: EXT-FR-141, EXT-FR-FE-143, EXT-FR-FE-145
+          type: string
+      required:
+        - identifier
+        - line_identifier
+      type: object
+    line_vat_information:
+      description: >-
+        BG-30
+
+
+        A group of business terms providing information about the VAT applicable
+        for the goods and services invoiced on the Invoice line.
+      properties:
+        due_date_code:
+          description: |-
+            EXT-FR-FE-180
+
+            VAT due date code on line
+          type: string
+        exemption_reason:
+          description: |-
+            EXT-FR-FE-178
+
+            VAT exemption reason
+          type: string
+        exemption_reason_code:
+          description: |-
+            EXT-FR-FE-179
+
+            VAT exemption reason code
+          type: string
+        invoiced_item_vat_category_code:
+          $ref: "#/components/schemas/vat_category_code"
+        invoiced_item_vat_rate:
+          description: >-
+            BT-152
+
+
+            Invoiced item VAT rate
+
+            The VAT rate, represented as percentage that applies to the invoiced
+            item.
+          format: decimal
+          type: string
+      required:
+        - invoiced_item_vat_category_code
+      type: object
+    list_directory_entries:
+      description: list directory_entries
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/directory_entry"
+          type: array
+      required:
+        - data
+      type: object
+    list_events:
+      description: list events
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/event"
+          type: array
+        has_after:
+          type: boolean
+      required:
+        - data
+        - has_after
+      type: object
+    list_invoices:
+      description: list invoices
+      properties:
+        count:
+          example: 1
+          type: integer
+        data:
+          items:
+            $ref: "#/components/schemas/invoice_overview"
+          type: array
+        has_after:
+          type: boolean
+        has_before:
+          type: boolean
+      required:
+        - data
+        - count
+        - has_after
+        - has_before
+      type: object
+    message:
+      properties:
+        message:
+          description: message of the report
+          type: string
+        raw:
+          description: raw message of the report
+          type: string
+      required:
+        - message
+        - raw
+      type: object
+    payee:
+      description: >-
+        BG-10
+
+
+        A group of business terms providing information about the Payee, i.e.
+        the role that receives the payment.
+
+        The role of Payee may be fulfilled by another party than the Seller,
+        e.g. a factoring service.
+      properties:
+        contact:
+          $ref: "#/components/schemas/contact"
+        electronic_address:
+          $ref: "#/components/schemas/electronic_address"
+        identifiers:
+          description: >-
+            BT-60
+
+
+            Payee identifier
+
+            An identifier for the Payee.
+
+            If no scheme is specified, it should be known by Buyer and Seller,
+            e.g. a previously exchanged Buyer or Seller assigned identifier.
+
+            Scheme identifier
+
+            The identification scheme identifier of the Payee identifier.
+
+            If used, the identification scheme shall be chosen from the entries
+            of the list published by the ISO/IEC 6523 maintenance agency.
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        legal_registration_identifier:
+          $ref: "#/components/schemas/legal_registration_identifier"
+        name:
+          description: >-
+            BT-59
+
+
+            The name of the Payee.
+
+            Shall be used when the Payee is different from the Seller. The Payee
+            name may however be the same as the Seller name.
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+        role_code:
+          description: |-
+            EXT-FR-FE-26
+
+            https://service.unece.org/trade/untdid/d99a/uncl/uncl3035.htm
+          type: string
+        vat_identifier:
+          description: BT-31, BT-48, EXT-FR-FE-27, EXT-FR-FE-28, EXT-FR-FE-10,
+            EXT-FR-FE-11, EXT-FR-FE-50, EXT-FR-FE-51, EXT-FR-FE-73,
+            EXT-FR-FE-74, EXT-FR-FE-96, EXT-FR-FE-97, EXT-FR-FE-119,
+            EXT-FR-FE-120
+          type: string
+      required:
+        - name
+      type: object
+    payment_card_information:
+      description: >-
+        BG-18
+
+
+        A group of business terms providing information about card used for
+        payment contemporaneous with invoice issuance.
+
+        Only used if the Buyer had opted to pay by using a payment card such as
+        a credit or debit card.
+      properties:
+        account_number:
+          description: >-
+            BT-87
+
+
+            Payment card primary account number
+
+            The Primary Account Number (PAN) of the card used for payment.
+
+            In accordance with card payments security standards an invoice
+            should never include a full card primary account number. At the
+            moment PCI Security Standards Council has defined that the first 6
+            digits and last 4 digits are the maximum number of digits to be
+            shown.
+          type: string
+        holder_name:
+          description: |-
+            BT-88
+
+            Payment card holder name
+            The name of the payment card holder.
+          type: string
+        network_id:
+          description: BT-87-1 Only in UBL
+          type: string
+      required:
+        - account_number
+      type: object
+    payment_instructions:
+      description: |-
+        BG-16
+
+        A group of business terms providing information about the payment.
+      properties:
+        credit_transfers:
+          description: |-
+            BG-17
+
+            A group of business terms to specify credit transfer payments.
+          items:
+            $ref: "#/components/schemas/credit_transfer"
+          type: array
+        direct_debit:
+          $ref: "#/components/schemas/direct_debit"
+        payment_card_information:
+          $ref: "#/components/schemas/payment_card_information"
+        payment_means_text:
+          description: >-
+            BT-82
+
+
+            Payment means text
+
+            The means, expressed as text, for how a payment is expected to be or
+            has been settled.
+
+            Such as cash, credit transfer, direct debit, credit card, etc.
+          type: string
+        payment_means_type_code:
+          $ref: "#/components/schemas/payment_means_code"
+        remittance_information:
+          description: >-
+            BT-83
+
+
+            Remittance information
+
+            A textual value used to establish a link between the payment and the
+            Invoice, issued by the Seller.
+
+            Used for creditor's critical reconciliation information. This
+            information element helps the Seller to assign an incoming payment
+            to the relevant payment process. When specifying the textual value,
+            which is commonly the invoice number of the invoice being paid, but
+            may be another seller reference, the buyer should indicate this
+            reference in his payment order when executing the payment. In a
+            payment transaction this reference is transferred back to the Seller
+            as Remittance Information. In order to allow for automatic
+            processing of cross-border SEPA payments, only Latin characters
+            should be used in this field, with a maximum of 140 characters.
+            Reference section 1.4 of the SEPA credit transfer and SEPA direct
+            debit scheme implementation guides [13] and [14] for details of the
+            allowed characters. Other rules may apply for SEPA payments within
+            national borders. If remittance information is structured according
+            to the ISO 11649:2009 standard [16] for Structured RF Creditor
+            Reference, it shall be mapped to the Structured Remittance
+            Information Creditor Reference field in SEPA payments messages. If
+            remittance information is structured according to the EACT standard
+            for automated reconciliation [17], it shall be mapped to the
+            Unstructured Remittance Information field in SEPA payments
+            messages.” If remittance information is to be mapped to the End To
+            End Identification field or to the Structured Remittance Information
+            Creditor Reference field in SEPA payments messages, then in addition
+            to the Latin character set restriction, the content shall not start
+            or end with a '/' and the content shall not contain '//'s. See
+            reference [15].
+          type: string
+      required:
+        - payment_means_type_code
+      type: object
+    payment_means_code:
+      description: >-
+        https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred4461.htm
+
+
+        BT-81
+
+
+        Payment means type code
+
+        The means, expressed as code, for how a payment is expected to be or has
+        been settled.
+
+        Entries from the UNTDID 4461 code list [6] shall be used. Distinction
+        should be made between SEPA and non-SEPA payments, and between credit
+        payments, direct debits, card payments and other instruments.
+      type: string
+    postal_address:
+      description: >-
+        BG-5, EXT-FR-FE-BG-13
+
+
+        A group of business terms providing information about the address of the
+        Seller.
+
+        Sufficient components of the address are to be filled to comply with
+        legal requirements.
+
+
+        BG-8
+
+
+        A group of business terms providing information about the postal address
+        for the Buyer.
+
+        Sufficient components of the address are to be filled to comply with
+        legal requirements.
+
+
+        EXT-FR-FE-14, EXT-FR-FE-54, EXT-FR-FE-77, EXT-FR-FE-100, EXT-FR-FE-123
+
+
+        BG-8, EXT-FR-FE-31
+
+
+        BG-12
+
+
+        The Seller tax representative name/postal address shall be provided in
+        the invoice, if the Seller has a tax representative who is liable to pay
+        the VAT due. Sufficient components of the address are to be filled to
+        comply with legal requirements.
+
+
+        BG-15
+
+
+        A group of business terms providing information about the address to
+        which goods and services invoiced were or are delivered.
+
+        In the case of pick-up, the deliver to address is the pick-up address.
+        Sufficient components of the address are to be filled to comply with
+        legal requirements.
+
+
+        EXT-FR-FE-150
+      properties:
+        address_line1:
+          description: >-
+            BT-35, BT-50, BT-64, BT-75, EXT-FR-FE-15, EXT-FR-FE-32,
+            EXT-FR-FE-55, EXT-FR-FE-78, EXT-FR-FE-101, EXT-FR-FE-124,
+            EXT-FR-FE-151, EXT-FR-FE-171
+
+
+            The main address line in an address.
+
+            Usually the street name and number or post office box.
+          type: string
+        address_line2:
+          description: >-
+            BT-36, BT-51, BT-65, BT-76, EXT-FR-FE-16, EXT-FR-FR-33,
+            EXT-FR-FE-56, EXT-FR-FE-79, EXT-FR-FE-102, EXT-FR-FE-125,
+            EXT-FR-FE-152, EXT-FR-FE-172
+
+
+            An additional address line in an address that can be used to give
+            further details supplementing the main line.
+          type: string
+        address_line3:
+          description: >-
+            BT-162, BT-163, BT-164, BT-165, EXT-FR-FE-17, EXT-FR-FE-34,
+            EXT-FR-FE-57, EXT-FR-FE-80, EXT-FR-FE-103, EXT-FR-FE-126,
+            EXT-FR-FE-153, EXT-FR-FE-173
+
+
+            An additional address line in an address that can be used to give
+            further details supplementing the main line.
+          type: string
+        city:
+          description: >-
+            BT-37, BT-52, BT-66, BT-77, EXT-FR-FE-19, EXT-FR-FE-35,
+            EXT-FR-FE-58, EXT-FR-FE-82, EXT-FR-FE-104, EXT-FR-FE-127,
+            EXT-FR-FE-154, EXT-FR-FE-174
+
+
+            The common name of the city, town or village, where the Seller/Buyer
+            address is located.
+          type: string
+        country_code:
+          description: >-
+            BT-40, BT-55, BT-69, BT-80, EXT-FR-FE-21, EXT-FR-FE-38,
+            EXT-FR-FE-61, EXT-FR-FE-84, EXT-FR-FE-107, EXT-FR-FE-130,
+            EXT-FR-FE-157, EXT-FR-FE-177
+
+
+            A code that identifies the country.
+
+            If no tax representative is specified, this is the country where VAT
+            is liable. The lists of valid countries are registered with the EN
+            ISO 3166-1 Maintenance agency, “Codes for the representation of
+            names of countries and their subdivisions”.
+          type: string
+        country_subdivision:
+          description: >-
+            BT-39, BT-54, BT-68, BT-79, EXT-FR-FE-20, EXT-FR-FE-37,
+            EXT-FR-FE-60, EXT-FR-FE-83, EXT-FR-FE-106, EXT-FR-FE-129,
+            EXT-FR-FE-156, EXT-FR-FE-176
+
+
+            The subdivision of a country.
+
+            Such as a region, a county, a state, a province, etc.
+          type: string
+        post_code:
+          description: >-
+            BT-38, BT-53, BT-67, BT-78, EXT-FR-FE-18, EXT-FR-FE-36,
+            EXT-FR-FE-59, EXT-FR-FE-81, EXT-FR-FE-105, EXT-FR-FE-128,
+            EXT-FR-FE-155, EXT-FR-FE-175
+
+
+            The identifier for an addressable group of properties according to
+            the relevant postal service.
+
+            Such as a ZIP code or a post code.
+          type: string
+      required:
+        - country_code
+      type: object
+    preceding_invoice_reference:
+      properties:
+        issue_date:
+          description: >-
+            BT-26
+
+
+            The date when the Preceding Invoice was issued.
+
+            The Preceding Invoice issue date shall be provided in case the
+            Preceding Invoice identifier is not unique.
+          format: date
+          type: string
+        preceding_invoice_type_code:
+          $ref: "#/components/schemas/invoice_type_code"
+        reference:
+          description: >-
+            BT-25
+
+
+            Preceding Invoice reference
+
+            The identification of an Invoice that was previously sent by the
+            Seller.
+          type: string
+      required:
+        - reference
+      type: object
+    price_details:
+      description: >-
+        BG-29
+
+
+        A group of business terms providing information about the price applied
+        for the goods and services invoiced on the Invoice line.
+      properties:
+        item_gross_price:
+          description: >-
+            BT-148
+
+
+            Item gross price
+
+            The unit price, exclusive of VAT, before subtracting Item price
+            discount.
+          format: decimal
+          type: string
+        item_net_price:
+          description: >-
+            BT-146
+
+
+            Item net price
+
+            The price of an item, exclusive of VAT, after subtracting item price
+            discount.
+
+            The Item net price has to be equal with the Item gross price less
+            the Item price discount.
+          format: decimal
+          type: string
+        item_price_base_quantity:
+          description: |-
+            BT-149
+
+            Item price base quantity
+            The number of item units to which the price applies.
+          format: decimal
+          type: string
+        item_price_discount:
+          description: >-
+            BT-147
+
+
+            Item price discount
+
+            The total discount subtracted from the Item gross price to calculate
+            the Item net price.
+
+            Only applies if the discount is provided per unit and if it is not
+            included in the Item gross price.
+          format: decimal
+          type: string
+        quantity_unit_code:
+          $ref: "#/components/schemas/unit_code"
+      required:
+        - item_net_price
+      type: object
+    process_control:
+      description: >-
+        BG-2
+
+
+        A group of business terms providing information on the business process
+        and rules applicable to the Invoice document.
+      properties:
+        business_process_type:
+          description: >-
+            BT-23
+
+
+            Business process type
+
+            Identifies the business process context in which the transaction
+            appears, to enable the Buyer to process the Invoice in an
+            appropriate way.
+
+            To be specified by the Buyer.
+          type: string
+        specification_identifier:
+          description: >-
+            BT-24
+
+
+            Specification identifier
+
+            An identification of the specification containing the total set of
+            rules regarding semantic content, cardinalities and business rules
+            to which the data contained in the instance document conforms.
+
+            This identifies compliance or conformance to this document.
+            Compliant invoices specify: urn:cen.eu:en16931:2017. Invoices,
+            compliant to a user specification may identify that user
+            specification here. No identification scheme is to be used.
+          type: string
+      required:
+        - specification_identifier
+      type: object
+    reason_code:
+      description: >-
+        BT-98, BT-105, BT-140, BT-145
+
+
+        Document level allowance/charge reason code
+
+        The reason for the document level allowance/charge, expressed as a code.
+
+        Use entries of the UNTDID 5189 code list [6]. The Document level
+        allowance/charge reason code and the Document level allowance/charge
+        reason shall indicate the same allowance/charge reason.
+      type: string
+    report:
+      description: report of an invoice analyze
+      properties:
+        conformance_level:
+          description: conformence level of invoice
+          example: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2
+          type: string
+        duration:
+          description: time taken for processing invoice in milliseconds
+          example: 101
+          type: integer
+        error:
+          description: error
+          type: string
+        file_name:
+          description: name of related uploaded file
+          example: invoice.pdf
+          type: string
+        file_size:
+          description: size of related uploaded file
+          example: "1024"
+          type: integer
+        format:
+          description: format of invoice
+          example: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2
+          type: string
+        is_valid:
+          description: validity of uploaded file
+          type: boolean
+        subreports:
+          items:
+            $ref: "#/components/schemas/subreport"
+          type: array
+      required:
+        - file_name
+        - file_size
+        - is_valid
+        - duration
+        - format
+        - conformance_level
+        - subreports
+      type: object
+    seller:
+      description: >-
+        BG-4
+
+
+        A group of business terms providing information about the Seller.
+
+
+        EXT-FR-FE-BG-12
+
+
+        Seller
+
+        Group of business terms providing information about the Seller on the
+        line
+
+        In the case of a Multi-Seller invoice, the Seller can be identified on
+        the line
+      properties:
+        additional_legal_information:
+          description: |-
+            BT-33
+
+            Seller additional legal information
+            Additional legal information relevant for the Seller.
+            Such as share capital.
+          type: string
+        contact:
+          $ref: "#/components/schemas/contact"
+        electronic_address:
+          $ref: "#/components/schemas/electronic_address"
+        identifiers:
+          description: >-
+            BT-29, EXT-FR-FE-166
+
+
+            Seller identifier
+
+            An identification of the Seller
+
+            For many systems, the Seller identifier is a key piece of
+            information. Multiple Seller identifiers may be assigned or
+            specified. They may be differentiated by using various
+            identification schemes. If no scheme is specified, it should be
+            known by Buyer and Seller, e.g. a previously exchanged Buyer
+            assigned identifier of the Seller.
+
+            The identification scheme identifier of the Seller identifier.
+
+            If used, the identification scheme identifier shall be chosen from
+            the entries of the list published by the ISO/IEC 6523 maintenance
+            agency.
+          items:
+            $ref: "#/components/schemas/identifier"
+          type: array
+        legal_registration_identifier:
+          $ref: "#/components/schemas/legal_registration_identifier"
+        name:
+          description: >-
+            BT-27, BT-44, BT-59, EXT-FR-FE-03, EXT-FR-FE-43, EXT-FR-FE-66,
+            EXT-FR-FE-89, EXT-FR-FE-112, EXT-FR-FE-164
+
+
+            The full formal name by which the Seller is registered in the
+            national registry of legal entities or as a Taxable person or
+            otherwise trades as a person or persons.
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+        tax_registration_identifier:
+          description: >-
+            BT-32, EXT-FR-FE-169
+
+
+            Seller tax registration identifier
+
+            The local identification (defined by the Seller’s address) of the
+            Seller for tax purposes or a reference that enables the Seller to
+            state his registered tax status.
+
+            This information may affect how the Buyer settles the payment (such
+            as for social security fees). E.g. in some countries, if the Seller
+            is not registered as a tax paying entity then the Buyer is required
+            to withhold the amount of the tax and pay it on behalf of the
+            Seller.
+          type: string
+        trading_name:
+          description: >-
+            BT-28, EXT-FR-FE-165
+
+
+            Seller trading name
+
+            A name by which the Seller is known, other than Seller name (also
+            known as Business name).
+
+            This may be used if different from the Seller name.
+          type: string
+        vat_identifier:
+          description: >-
+            BT-31, EXT-FR-FE-168
+
+
+            Seller VAT identifier
+
+            The Seller's VAT identifier (also known as Seller VAT identification
+            number).
+
+            VAT number prefixed by a country code. A VAT registered Supplier
+            shall include his VAT ID, except when he uses a tax representative.
+          type: string
+      required:
+        - name
+        - electronic_address
+        - postal_address
+      type: object
+    seller_tax_representative_party:
+      description: >-
+        BG-11
+
+
+        A group of business terms providing information about the Seller's tax
+        representative.
+      properties:
+        name:
+          description: |-
+            BT-62
+
+            Seller tax representative name
+            The full name of the Seller's tax representative party.
+          type: string
+        postal_address:
+          $ref: "#/components/schemas/postal_address"
+        vat_identifier:
+          description: >-
+            BT-63
+
+
+            Seller tax representative VAT identifier
+
+            The VAT identifier of the Seller's tax representative party.
+
+            VAT number prefixed by a country code based on EN ISO 3166-1 "Codes
+            for the representation of names of countries and their
+            subdivisions".
+          type: string
+      required:
+        - name
+        - vat_identifier
+        - postal_address
+      type: object
+    status_code:
+      description: >-
+        A list of processing events associated with the invoice.
+
+
+        ### Architecture Note: No State Machine
+
+        This property is an **array of statuses**. There is **no formal state
+        machine** governing the transitions. Statuses can be added at any time,
+        and their presence indicates an event has occurred rather than a
+        current, exclusive state.
+
+
+        ### Status Categories
+
+        * **`api:*`**: Internal statuses defined by **Super PDP** only (not
+        official).
+
+        * **`fr:*`**: Official French "Facturation Électronique" statuses.
+        Detailed definitions can be found in [our
+        documentation](https://www.superpdp.tech/documentation/6).
+
+
+        ### Routing Logic
+
+        * **French Invoices**: Typically receive `fr:*` statuses.
+
+        * **Peppol Invoices**: Used when an invoice does not belong to the
+        French framework; these utilize `api:*` statuses.
+
+        * **Exception**: `api:uploaded` is universal and used for both French
+        and Peppol workflows as the initial entry point.
+
+
+        ### Meaning of api:* Statuses
+
+        * `api:uploaded`: Synchronously created upon posting. Passed syntactic
+        checks (valid JSON/XML shape).
+
+        * `api:invalid`: Error occurred before the invoice was sent to the
+        external access point.
+
+        * `api:validated`: Invoice passed semantic checks (Schematron).
+
+        * `api:sent`: Invoice has been transmitted to the other access point.
+
+        * `api:rejected`: Invoice was asynchronously rejected by the other
+        access point.
+
+        * `api:received`: Invoice received by another access point (reception
+        mode).
+
+        * `api:acknowledged`: The other access point returned an optional
+        acknowledgment (received, but may have errors).
+
+        * `api:accepted`: The other access point returned an optional acceptance
+        (no errors).
+      enum:
+        - api:uploaded
+        - api:invalid
+        - api:validated
+        - api:sent
+        - api:rejected
+        - api:received
+        - api:acknowledged
+        - api:accepted
+        - fr:200
+        - fr:201
+        - fr:202
+        - fr:203
+        - fr:204
+        - fr:205
+        - fr:206
+        - fr:207
+        - fr:208
+        - fr:209
+        - fr:210
+        - fr:211
+        - fr:212
+        - fr:213
+      summary: Event-based log of internal (api:*) and official French (fr:*) invoice
+        statuses.
+      type: string
+    status_code_create:
+      description: check documentation of `status_code` for more information
+      enum:
+        - fr:204
+        - fr:205
+        - fr:206
+        - fr:207
+        - fr:208
+        - fr:209
+        - fr:210
+        - fr:211
+        - fr:212
+      type: string
+    subreport:
+      properties:
+        checks_count:
+          description: number of checks beeing done by the validator
+          example: 39
+          type: integer
+        failures:
+          items:
+            $ref: "#/components/schemas/message"
+          type: array
+        messages:
+          items:
+            $ref: "#/components/schemas/message"
+          type: array
+        validator:
+          description: name of used validator
+          example: PEPPOL-EN16931-UBL.xsl
+          type: string
+      required:
+        - validator
+        - checks_count
+        - messages
+        - failures
+      type: object
+    totals:
+      description: |-
+        BG-22
+
+        A group of business terms providing the monetary totals for the Invoice.
+      properties:
+        amount_due_for_payment:
+          description: >-
+            BT-115
+
+
+            Amount due for payment
+
+            The outstanding amount that is requested to be paid.
+
+            This amount is the Invoice total amount with VAT minus the paid
+            amount that has been paid in advance. The amount is zero in case of
+            a fully paid Invoice. The amount may be negative; in that case the
+            Seller owes the amount to the Buyer.
+          format: decimal
+          type: string
+        paid_amount:
+          description: >-
+            BT-113
+
+
+            Paid amount
+
+            The sum of amounts which have been paid in advance.
+
+            This amount is subtracted from the invoice total amount with VAT to
+            calculate the amount due for payment.
+          format: decimal
+          type: string
+        rounding_amount:
+          description: >-
+            BT-114
+
+
+            Rounding amount
+
+            The amount to be added to the invoice total to round the amount to
+            be paid.
+          format: decimal
+          type: string
+        sum_allowances_amount:
+          description: >-
+            BT-107
+
+
+            Sum of allowances on document level
+
+            Sum of all allowances on document level in the Invoice.
+
+            Allowances on line level are included in the Invoice line net amount
+            which is summed up into the Sum of Invoice line net amount.
+          format: decimal
+          type: string
+        sum_charges_amount:
+          description: >-
+            BT-108
+
+
+            Sum of charges on document level
+
+            Sum of all charges on document level in the Invoice.
+
+            Charges on line level are included in the Invoice line net amount
+            which is summed up into the Sum of Invoice line net amount.
+          format: decimal
+          type: string
+        sum_invoice_lines_amount:
+          description: |-
+            BT-106
+
+            Sum of Invoice line net amount
+            Sum of all Invoice line net amounts in the Invoice.
+          format: decimal
+          type: string
+        total_vat_amount:
+          $ref: "#/components/schemas/amount"
+        total_vat_amount_accounting_currency:
+          $ref: "#/components/schemas/amount"
+        total_with_vat:
+          description: >-
+            BT-112
+
+
+            Invoice total amount with VAT
+
+            The total amount of the Invoice with VAT.
+
+            The Invoice total amount with VAT is the Invoice total amount
+            without VAT plus the Invoice total VAT amount.
+          format: decimal
+          type: string
+        total_without_vat:
+          description: >-
+            BT-109
+
+
+            Invoice total amount without VAT
+
+            The total amount of the Invoice without VAT.
+
+            The Invoice total amount without VAT is the Sum of Invoice line net
+            amount minus Sum of allowances on document level plus Sum of charges
+            on document level.
+          format: decimal
+          type: string
+      required:
+        - sum_invoice_lines_amount
+        - total_without_vat
+        - total_with_vat
+        - amount_due_for_payment
+      type: object
+    unit_code:
+      description: >-
+        BT-130
+
+
+        Invoiced quantity unit of measure code
+
+        The unit of measure that applies to the invoiced quantity.
+
+        The unit of measure shall be chosen from the lists in UN/ECE
+        Recommendation N°. 20 “Codes for Units of Measure Used in International
+        Trade” [7] and UN/ECE Recommendation N° 21 “Codes for Passengers, Types
+        of Cargo, Packages and Packaging Materials (with Complementary Codes for
+        Package Names)” [19] applying the method described in UN/ECE Rec N° 20
+        Intro 2.a). Note that in most cases it is not needed for Buyers and
+        Sellers to implement these lists fully in their software. Sellers need
+        only to support the units needed for their goods and services; Buyers
+        only need to verify that the units used in the Invoice are equal to the
+        units used in other documents (such as Contract, Catalogue, Order and
+        Despatch advice).
+
+
+        BT-150
+
+
+        Item price base quantity unit of measure code
+
+        The unit of measure that applies to the Item price base quantity.
+
+        The Item price base quantity unit of measure shall be the same as the
+        Invoiced quantity unit of measure (BT-130).
+      type: string
+    validation_report:
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/report"
+          type: array
+      required:
+        - data
+      type: object
+    vat_break_down:
+      properties:
+        vat_category_code:
+          $ref: "#/components/schemas/vat_category_code"
+        vat_category_rate:
+          description: >-
+            BT-119
+
+
+            VAT category rate
+
+            The VAT rate, represented as percentage that applies for the
+            relevant VAT category.
+
+            The VAT category code and the VAT category rate shall be consistent.
+          format: decimal
+          type: string
+        vat_category_tax_amount:
+          description: >-
+            BT-117
+
+
+            VAT category tax amount
+
+            The total VAT amount for a given VAT category.
+
+            Calculated by multiplying the VAT category taxable amount with the
+            VAT category rate for the relevant VAT category.
+          format: decimal
+          type: string
+        vat_category_taxable_amount:
+          description: >-
+            BT-116
+
+
+            VAT category taxable amount
+
+            Sum of all taxable amounts subject to a specific VAT category code
+            and VAT category rate (if the VAT category rate is applicable).
+
+            The sum of Invoice line net amount minus allowances plus charges on
+            document level which are subject to a specific VAT category code and
+            VAT category rate (if the VAT category rate is applicable).
+          format: decimal
+          type: string
+        vat_exemption_reason:
+          description: >-
+            BT-120
+
+
+            VAT exemption reason text
+
+            A textual statement of the reason why the amount is exempted from
+            VAT or why no VAT is being charged
+
+            Articles 226 items 11 to 15 Directive 2006/112/EC [2].
+          type: string
+        vat_exemption_reason_code:
+          $ref: "#/components/schemas/vat_exemption_reason_code"
+        vat_identifier:
+          description: |-
+            BT-118-0
+
+            VAT type code identifier qualifier
+          type: string
+      required:
+        - vat_category_taxable_amount
+        - vat_category_tax_amount
+        - vat_category_code
+      type: object
+    vat_category_code:
+      description: >-
+        AE: VAT Reverse charge
+
+        E: Exempt from tax
+
+        G: Free export item, tax not charge
+
+        K: VAT exempt for EEA intra-community supply of goods and services
+
+        L: Canary Islands General Indirect Tax
+
+        M: Tax for production, services and importation in Ceuta and Melilla
+
+        O: Service outside scope of tax
+
+        S: Standard rate
+
+        Z: Zero rated goods
+
+
+        BT-95, BT-102
+
+
+        Document level allowance/charge VAT category code
+
+        A coded identification of what VAT category applies to the document
+        level allowance/charge.
+
+        The following entries of UNTDID 5305 [6] are used (further clarification
+        between brackets):
+
+        - Standard rate (Liable for VAT in a standard way)
+
+        - Zero rated goods (Liable for VAT with a percentage rate of zero)
+
+        - Exempt from tax (VAT/IGIC/IPSI)
+
+        - VAT Reverse Charge (Reverse charge VAT/IGIC/IPSI rules apply)
+
+        - VAT exempt for intra community supply of goods (VAT/IGIC/IPSI not
+        levied due to Intra-community supply rules)
+
+        - Free export item, tax not charged (VAT/IGIC/IPSI not levied due to
+        export outside of the EU)
+
+        - Services outside scope of tax (Sale is not subject to VAT/IGIC/IPSI)
+
+        - Canary Islands General Indirect Tax (Liable for IGIC tax)
+
+        - Liable for IPSI (Ceuta/Melilla tax)
+
+
+        BT-118
+
+
+        VAT category code
+
+        Coded identification of a VAT category.
+
+        The following entries of UNTDID 5305 [6] are used (further clarification
+        between brackets):
+
+        - Standard rate (Liable for VAT in a standard way)
+
+        - Zero rated goods (Liable for VAT with a percentage rate of zero)
+
+        - Exempt from tax (VAT/IGIC/IPSI)
+
+        - VAT Reverse Charge (Reverse charge VAT/IGIC/IPSI rules apply)
+
+        - VAT exempt for intra community supply of goods (VAT/IGIC/IPSI not
+        levied due to Intra-community supply rules)
+
+        - Free export item, tax not charged (VAT/IGIC/IPSI not levied due to
+        export outside of the EU)
+
+        - Services outside scope of tax (Sale is not subject to VAT/IGIC/IPSI)
+
+        - Canary Islands General Indirect Tax (Liable for IGIC tax)
+
+        - Liable for IPSI (Ceuta/Melilla tax)
+
+
+        BT-151
+
+
+        Invoiced item VAT category code
+
+        The VAT category code for the invoiced item.
+
+        The following entries of UNTDID 5305 [6] are used (further clarification
+        between brackets):
+
+        - Standard rate (Liable for VAT in a standard way)
+
+        - Zero rated goods (Liable for VAT with a percentage rate of zero)
+
+        - Exempt from tax (VAT/IGIC/IPSI)
+
+        - VAT Reverse Charge (Reverse charge VAT/IGIC/IPSI rules apply)
+
+        - VAT exempt for intra community supply of goods (VAT/IGIC/IPSI not
+        levied due to Intra-community supply rules)
+
+        - Free export item, tax not charged (VAT/IGIC/IPSI not levied due to
+        export outside of the EU)
+
+        - Services outside scope of tax (Sale is not subject to VAT/IGIC/IPSI)
+
+        - Canary Islands General Indirect Tax (Liable for IGIC tax)
+
+        - Liable for IPSI (Ceuta/Melilla tax)
+      enum:
+        - AE
+        - E
+        - G
+        - K
+        - L
+        - M
+        - O
+        - S
+        - Z
+      type: string
+    vat_exemption_reason_code:
+      description: |-
+        BT-121
+
+        VAT exemption reason code
+        A coded statement of the reason for why the amount is exempted from VAT.
+        Code list issued and maintained by the Connecting Europe Facility.
+      type: string
+  securitySchemes:
+    oauth2:
+      description: >
+        Use authorization code to access data of another user after he gives his
+        consent.
+
+        Use client credentials to access your own data (similar to api key)
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.superpdp.tech/oauth2/authorize
+          scopes: {}
+          tokenUrl: https://api.superpdp.tech/oauth2/token
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.superpdp.tech/oauth2/token
+      type: oauth2
+info:
+  description: >-
+    The SUPER PDP API allows developers to programatically send and receive
+    invoices in compliance with France’s electronic invoicing reform, and more
+    generally within the Peppol network.
+
+
+    Object ids are stored internally in our PostgreSQL database as positive
+    bigints, which means that their values is in the range [1,
+    9223372036854775807]
+
+
+    Release Notes
+
+
+    - 1.9.4 (2026-02-27): add parameter to en_invoice to support last version
+      - Deprecate invoiced_object_identifier_scheme and invoiced_object_identifier_value fields. Use invoiced_object_identifiers array instead 
+
+    - 1.9.3 (2026-02-23): add documentation on multipart request to convert to
+    Factur-X
+
+
+    - 1.9.2 (2026-02-09): add details and attachments to invoice_events
+    responses
+
+
+    - 1.9.1 (2026-01-28): document values of invoice statuses
+
+
+    - 1.9.0 (2026-01-26):
+      - add creation of invoice events with status: 'fr:204', 'fr:205', 'fr:206', 'fr:207', 'fr:208', 'fr:209', 'fr:210', 'fr:211'
+      - add parameters to the invoice event 'fr:212' to specify the amount received
+
+    - 1.8.0.beta (2026-01-20):
+      - list invoice_events pagination to allow synchronization
+      - list and get invoices expand invoice_events for convenient listing of events
+
+    - 1.7.1.beta (2026-01-09): document all missing status code
+
+
+    - 1.7.0.beta (2026-01-07): add endpoint to create and delete directory
+    entries
+
+
+    - 1.6.0.beta (2026-01-02): add endpoint to list directory entries
+
+
+    - 1.5.0.beta (2025-12-31): describe post invoice_events with valid statuses
+
+
+    - 1.4.0.beta (2025-12-10):
+
+      - download Peppol BIS test invoice if test companies have non-french addresses
+
+      - convert invoices now accepts factur-x as input
+
+    - 1.3.0.beta (2025-12-03):
+      - generate test invoice as json
+      - new route to convert between json, cii and ubl
+
+    - 1.2.0.beta (2025-12-01): define en_invoice structure in GET and LIST
+    endpoints
+
+
+    - 1.1.0.beta (2025-11-20): add endpoint to list invoice events
+  title: SUPER PDP API
+  version: 1.10.0.beta
+paths:
+  /v1.beta/companies/me:
+    get:
+      description: Show the company associated with the current access token.
+      operationId: CompaniesMe
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/company"
+          description: Success
+      summary: Show the current company
+      tags:
+        - companies
+  /v1.beta/directory_entries:
+    get:
+      description: >+
+        List the directory entries of the company.
+
+
+        The response contains addresses that can be used to send an invoice to
+        the company.
+
+      operationId: DirectoryEntriesList
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/list_directory_entries"
+          description: Event created
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: List directory entries
+      tags:
+        - directory_entries
+    post:
+      description: Create a directory entry
+      operationId: DirectoryEntryCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create_directory_entry"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/directory_entry"
+          description: Event created
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Create a new directory entry
+      tags:
+        - directory_entries
+  /v1.beta/directory_entries/{id}:
+    delete:
+      description: Delete a directory entry. "Reply-to" addresses are technical
+        addresses and cannot be deleted
+      operationId: DirectoryEntryDelete
+      parameters:
+        - description: The id of the directory entry
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204": {}
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Delete directory entry
+      tags:
+        - directory_entries
+    get:
+      description: Get directory entry
+      operationId: DirectoryEntryGet
+      parameters:
+        - description: The id of the directory entry
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/directory_entry"
+          description: Event created
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Get a directory entry
+      tags:
+        - directory_entries
+  /v1.beta/invoice_events:
+    get:
+      description: >-
+        List invoices events.
+
+         By default, events for all invoices are listed. Use `invoice_id` parameter to select only events related to one invoice.
+
+        Invoice events are sorted by id in ascending order.
+
+
+        Pagination is controlled with 2 parameters: `limit` and
+        `starting_after_id`. These parameters allows to return invoice events
+        with ids stricly greater than the provided id.
+
+
+        At most, `limit` invoices are returned per page with a default of 100
+        and a maximum of 1000.
+
+
+        Along with the data, `has_after` is returned. `has_after` is true if one
+        or more invoice events, that is not on the current page, exist with a
+        greater id.
+      operationId: InvoiceEventsList
+      parameters:
+        - in: query
+          name: invoice_id
+          schema:
+            type: integer
+        - in: query
+          name: starting_after_id
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            default: 100
+            maximum: 1000
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/list_events"
+          description: Event created
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: List invoices events
+      tags:
+        - invoice_events
+    post:
+      description: Create an invoice event message and place it in a queue to be sent
+        asynchronously. If the status_code is 'fr:212' without details, the
+        amount will be the invoice total.
+      operationId: InvoiceEventsCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                attachments:
+                  items:
+                    $ref: "#/components/schemas/invoice_event_attachment"
+                  type: array
+                details:
+                  items:
+                    $ref: "#/components/schemas/invoice_event_detail"
+                  type: array
+                invoice_id:
+                  type: integer
+                status_code:
+                  $ref: "#/components/schemas/status_code_create"
+              required:
+                - invoice_id
+                - status_code
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/event"
+          description: Event created
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Create an invoice event
+      tags:
+        - invoice_events
+  /v1.beta/invoices:
+    get:
+      description: >-
+        List invoices.
+
+
+        By default, both incoming and outgoing invoices are listed. Use the
+        `direction` parameter to select only incoming or outgoing invoices.
+
+
+        The list of invoices can be narrowed down to a period with the `date`
+        parameter. Accepted format are `YYYY`, `YYYY-MM`, `YYYY-MM-DD`.
+
+
+        By default, the invoices are sorted by id in ascending order. The
+        `order` parameter can be used to change the order direction.
+
+
+        Pagination is controlled with 2 parameters: `limit` and one of
+        `starting_after_id` or `ending_before_id`. These parameters allows to
+        return invoices with ids stricly greater, or stictly less, than the
+        provided id.
+
+
+        At most, `limit` invoices are returned per page with a default of 100
+        and a maximum of 1000.
+
+
+        Along with the data, 3 values are returned: `count`, `has_before` and
+        `has_after`. `count` is equal to the total number of invoices of all the
+        pages. `has_before` is true if one or more invoices, that are not in the
+        current page, exist with a smaller id. `has_after` is true if one or
+        more invoices, that are not on the current page, exist with a greater
+        id.
+
+
+        By default, the `en_invoice` property is not returned, for performance
+        reasons. Use the expand parameter to control the amount of expanded data
+        in the response. The basic usage is `expand[]=en_invoice` to return
+        expanded data for the en_invoice propery. A more advanced usage to
+        return nested expanded data is, for example,
+        `expand[]=en_invoice&expand[]=en_invoice.lines`.
+      operationId: InvoicesList
+      parameters:
+        - in: query
+          name: direction
+          schema:
+            enum:
+              - in
+              - out
+            type: string
+        - in: query
+          name: date
+          schema:
+            example: 2025-11
+            type: string
+        - in: query
+          name: order
+          schema:
+            default: asc
+            enum:
+              - asc
+              - desc
+            type: string
+        - in: query
+          name: starting_after_id
+          schema:
+            type: integer
+        - in: query
+          name: ending_before_id
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            default: 100
+            maximum: 1000
+            type: integer
+        - in: query
+          name: expand[]
+          schema:
+            items:
+              enum:
+                - en_invoice
+                - en_invoice.invoice
+                - en_invoice.seller
+                - en_invoice.buyer
+                - en_invoice.notes
+                - en_invoice.preceding_invoice_references
+                - en_invoice.buyer_agent
+                - en_invoice.payee
+                - en_invoice.payer
+                - en_invoice.seller_agent
+                - en_invoice.addressed_to
+                - en_invoice.third_party_biller
+                - en_invoice.delivery_information
+                - en_invoice.deliver_to_address
+                - en_invoice.payment_instructions
+                - en_invoice.document_level_allowances
+                - en_invoice.document_level_charges
+                - en_invoice.vat_break_down
+                - en_invoice.additional_supporting_documents
+                - en_invoice.lines
+                - events
+              type: string
+            type: array
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/list_invoices"
+          description: Success
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: List invoices
+      tags:
+        - invoices
+    post:
+      description: Create an invoice and place it in a queue to be sent
+        asynchronously. Succeeds if the XML structure of the payload is valid,
+        but this does not mean that the invoice will pass the additionnal
+        validation steps, or that the transmission will succeed. The `id`
+        attribute in the responds allows to fetch the invoice events later.
+      operationId: InvoicesCreate
+      requestBody:
+        content:
+          application/xml: {}
+          multipart/form-data:
+            schema:
+              properties:
+                file_name:
+                  example: invoice.pdf
+                  format: binary
+                  type: string
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/invoice"
+          description: Success
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Create (send) an invoice
+      tags:
+        - invoices
+  /v1.beta/invoices/convert:
+    post:
+      description: Convert an invoice to another format. It is possible to use a
+        multipart request to combine a PDF and a invoice to get a Factur-X in
+        ouput
+      operationId: ConvertInvoice
+      parameters:
+        - description: Format of uploaded invoice.
+          in: query
+          name: from
+          required: true
+          schema:
+            $ref: "#/components/schemas/convert_invoice_format"
+        - description: Format of returned invoice.
+          in: query
+          name: to
+          required: true
+          schema:
+            $ref: "#/components/schemas/convert_invoice_format"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/en_invoice"
+          application/xml: {}
+          multipart/form-data:
+            encoding:
+              invoice:
+                contentType: application/json, application/xml
+              pdf:
+                contentType: application/pdf
+            schema:
+              properties:
+                invoice:
+                  description: The invoice to include in the PDF in JSON or CII format
+                  oneOf:
+                    - $ref: "#/components/schemas/en_invoice"
+                    - description: The invoice in XML to include in the PDF
+                      format: binary
+                      type: string
+                pdf:
+                  description: The PDF file used to render the Factur-X
+                  format: binary
+                  type: string
+              required:
+                - pdf
+                - invoice
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/en_invoice"
+            application/xml: {}
+          description: Success
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      security: []
+      summary: Convert invoice
+      tags:
+        - invoices
+  /v1.beta/invoices/generate_test_invoice:
+    get:
+      description: This is a convenience method for companies in sandbox mode, because
+        generating a valid invoice can be troublesome. Nothing is saved in our
+        database, the returned invoice is ready to be sent with the API. By
+        default, the seller of the invoice will be the company associated with
+        the access token. The buyer will be randomly picked among the other
+        sandbox companies.
+      operationId: GenerateTestInvoice
+      parameters:
+        - description: Format of returned invoice.
+          in: query
+          name: format
+          required: true
+          schema:
+            $ref: "#/components/schemas/generate_test_invoice_format"
+      responses:
+        "200":
+          content:
+            application/xml: {}
+          description: Invoice generated with the format passed in parameters
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Download a test invoice
+      tags:
+        - invoices
+  /v1.beta/invoices/{id}:
+    get:
+      description: Get an invoice with a specific id.
+      operationId: InvoicesGet
+      parameters:
+        - description: The id of the invoice
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/invoice"
+          description: Success
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Get invoice
+      tags:
+        - invoices
+  /v1.beta/invoices/{id}/download:
+    get:
+      description: Download the raw invoice file referenced by the id. The data can be
+        either XML or PDF.
+      operationId: InvoicesDownload
+      parameters:
+        - description: The id of the invoice to download
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/pdf:
+              schema:
+                format: binary
+                type: string
+            application/xml:
+              schema:
+                format: binary
+                type: string
+          description: The invoice file
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      summary: Download raw invoice file
+      tags:
+        - invoices
+  /v1.beta/validation_reports:
+    post:
+      description: Send one or more invoices as multipart and get a validation report
+        for each invoice. The invoice format will be automatically detected and
+        the appropriate validation rules will be used.
+      operationId: ValidationReports
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file_name:
+                  example: invoice.pdf
+                  format: binary
+                  type: string
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/validation_report"
+          description: Success
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "500":
+          $ref: "#/components/responses/internal_server_error"
+      security: []
+      summary: Validate invoices
+      tags:
+        - invoices
+security:
+  - oauth2: []
+servers:
+  - url: https://api.superpdp.tech/
+tags:
+  - name: companies
+    x-displayName: Companies
+  - name: invoices
+    x-displayName: Invoices
+  - name: invoice_events
+    x-displayName: Invoice Events
+  - name: directory_entries
+    x-displayName: Directory Entries

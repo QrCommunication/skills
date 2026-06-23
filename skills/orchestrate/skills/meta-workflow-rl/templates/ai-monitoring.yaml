@@ -1,0 +1,73 @@
+name: ai-monitoring
+description: "Pipeline de setup monitoring LLM"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Monitoring Design"
+    agent: devops-infra
+    skills:
+      - brainstorm
+      - mermaid-diagrams
+    task: |
+      Concevoir le monitoring:
+      - Metrics to track
+      - Alerting strategy
+      - Dashboard design
+      - Cost monitoring
+    output: "monitoring-design.md"
+    validation: "Design complete"
+    rollback: "Reviser design"
+
+  - name: "Performance Monitoring"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+    task: |
+      Setup performance:
+      - Latency tracking
+      - Token usage monitoring
+      - Error rate tracking
+      - Queue depth monitoring
+    output: "Performance monitoring"
+    validation: "Metrics collectees"
+    rollback: "Fix collection"
+    depends_on:
+      - "Monitoring Design"
+
+  - name: "Integration Setup"
+    agent: integration-specialist
+    skills:
+      - apex
+    task: |
+      Integrer le monitoring:
+      - LangSmith/Phoenix setup
+      - Custom metrics
+      - Log aggregation
+      - Trace collection
+    output: "Monitoring integre"
+    validation: "Data flowing"
+    rollback: "Fix integration"
+    depends_on:
+      - "Performance Monitoring"
+
+  - name: "Alerting & Security"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Configurer alertes:
+      - Error rate alerts
+      - Cost spike alerts
+      - Security monitoring
+      - PII detection
+    output: "Alerting configure"
+    validation: "Alerts fonctionnent"
+    rollback: "Fix alerts"
+    depends_on:
+      - "Integration Setup"

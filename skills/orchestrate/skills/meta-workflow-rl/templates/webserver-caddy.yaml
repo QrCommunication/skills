@@ -1,0 +1,73 @@
+name: webserver-caddy
+description: "Pipeline de configuration Caddy avec auto-SSL"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture:
+      - Sites configuration
+      - Reverse proxy needs
+      - Auto-SSL requirements
+      - Middleware needs
+    output: "caddy-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Network Configuration"
+    agent: network-engineer
+    skills:
+      - brainstorm
+    task: |
+      Configurer le reseau:
+      - DNS configuration
+      - Firewall rules
+      - Ports 80/443
+    output: "network-config.md"
+    validation: "Network OK"
+    rollback: "Fix network"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Caddy Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Configurer Caddy:
+      - Caddyfile configuration
+      - Auto-SSL verification
+      - Reverse proxy rules
+      - Compression
+      - Security headers
+    output: "Configuration Caddy"
+    validation: "Caddy fonctionne avec SSL"
+    rollback: "Restore previous config"
+    depends_on:
+      - "Network Configuration"
+
+  - name: "Security Verification"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Verifier securite:
+      - SSL Labs test
+      - Security headers
+      - Access controls
+    output: "caddy-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "Caddy Setup"

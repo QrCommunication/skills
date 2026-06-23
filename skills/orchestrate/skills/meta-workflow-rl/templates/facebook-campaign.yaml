@@ -1,0 +1,143 @@
+name: facebook-campaign
+description: "Lancement d'un produit sur Facebook avec posts suivi sur 3 semaines"
+category: marketing
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - marketing-copywriting
+  - social-media-generator
+  - executing-marketing-campaigns
+  - analytics-platforms
+  - humanizer
+  - content-marketer
+
+steps:
+  - name: "Analyse produit & audience"
+    agent: business-analyst
+    skills: [brainstorm, market-research-reports]
+    task: |
+      Analyser le produit à lancer : définir les personas cibles, l'USP,
+      les objectifs de campagne (reach, engagement, conversions) et les KPIs.
+      Identifier la concurrence sur Facebook et les opportunités de différenciation.
+    output: "brief-produit-audience.md"
+    validation: "Personas définis, USP claire, KPIs mesurables"
+    rollback: "N/A - phase analyse"
+
+  - name: "Stratégie & calendrier éditorial"
+    agent: marketing-strategy-pmm
+    depends_on: ["Analyse produit & audience"]
+    skills: [content-strategy]
+    task: |
+      Élaborer la stratégie 3 semaines (awareness S1, engagement S2, conversion S3).
+      Planifier fréquence de publication, thèmes par semaine, ton éditorial.
+      Créer le calendrier avec dates, types de posts et objectifs par post.
+    output: "strategie-calendrier-editorial.md"
+    validation: "Calendrier 3 semaines complet, minimum 15 posts planifiés"
+    rollback: "Réviser avec brief produit"
+
+  - name: "Création des contenus"
+    agent: content-marketer
+    depends_on: ["Stratégie & calendrier éditorial"]
+    parallel_group: "preparation"
+    skills: [humanizer, writing-clearly-and-concisely]
+    task: |
+      Rédiger tous les textes : posts organiques, textes ads (headline, description, CTA),
+      scripts Stories/Reels, variantes A/B. Ton humain et engageant.
+    output: "contenus-campagne.md"
+    validation: "15+ posts rédigés, 3 variantes A/B, textes ads < 125 chars"
+    rollback: "Réviser selon stratégie"
+
+  - name: "Visuels & formats"
+    agent: designer-ui-ux
+    depends_on: ["Stratégie & calendrier éditorial"]
+    parallel_group: "preparation"
+    skills: [visual-design-foundations, brand-identity]
+    task: |
+      Créer le brief visuel : charte graphique, formats requis (1:1, 4:5, 9:16, 16:9),
+      templates par format, brief visuel pour chaque post du calendrier.
+    output: "brief-visuels.md"
+    validation: "Brief complet, templates pour tous les formats Facebook"
+    rollback: "N/A - brief uniquement"
+
+  - name: "Setup campagne Facebook Ads"
+    agent: integration-specialist
+    depends_on: ["preparation"]
+    skills: [marketing-demand-acquisition]
+    task: |
+      Configurer dans Ads Manager : campagnes, ensembles de pubs, ciblage,
+      audiences personnalisées et lookalike, Pixel, budget, enchères,
+      suivi des conversions et tests A/B.
+    output: "setup-facebook-ads.md"
+    validation: "Campagne configurée, pixel actif, audiences créées, budget défini"
+    rollback: "Désactiver les campagnes et revoir la configuration"
+
+  - name: "Lancement semaine 1"
+    agent: marketing-demand-acquisition
+    depends_on: ["Setup campagne Facebook Ads", "Création des contenus"]
+    skills: [executing-marketing-campaigns]
+    task: |
+      Lancer et monitorer S1 (focus awareness) : publier posts organiques,
+      activer ads, monitorer quotidiennement reach/impressions/CTR/coût,
+      détecter anomalies, documenter J1-J7.
+    output: "rapport-semaine-1-brut.md"
+    validation: "Tous posts S1 publiés, données collectées J1-J7"
+    rollback: "Mettre en pause les ads si CPC > 2x la cible"
+
+  - name: "Analyse S1 & ajustements"
+    agent: data-analyst
+    depends_on: ["Lancement semaine 1"]
+    skills: [statistical-analysis]
+    task: |
+      Analyser S1 : KPIs (reach, engagement rate, CTR, CPM, CPC, ROAS),
+      identifier posts et audiences winners, recommandations et ajustements pour S2.
+    output: "analyse-s1-recommandations.md"
+    validation: "KPIs S1 calculés, winners identifiés, plan S2 ajusté"
+    rollback: "Conserver paramètres S1 si données insuffisantes"
+
+  - name: "Semaine 2"
+    agent: marketing-demand-acquisition
+    depends_on: ["Analyse S1 & ajustements"]
+    skills: [executing-marketing-campaigns]
+    task: |
+      Exécuter S2 (focus engagement) avec optimisations S1 : scaler sur winners,
+      couper ads sous-performantes, tester nouvelles variantes, documenter J8-J14.
+    output: "rapport-semaine-2-brut.md"
+    validation: "Tous posts S2 publiés, optimisations S1 appliquées"
+    rollback: "Revenir aux paramètres S1 si détérioration"
+
+  - name: "Analyse S2 & ajustements"
+    agent: data-analyst
+    depends_on: ["Semaine 2"]
+    skills: [statistical-analysis]
+    task: |
+      Analyser S2 : comparaison S1 vs S2, tendances confirmées,
+      scaling des winners, ajustements finaux pour S3 (focus conversion).
+    output: "analyse-s2-recommandations.md"
+    validation: "Comparaison S1/S2 complète, plan S3 finalisé"
+    rollback: "Conserver stratégie S2 si données insuffisantes"
+
+  - name: "Semaine 3"
+    agent: marketing-demand-acquisition
+    depends_on: ["Analyse S2 & ajustements"]
+    skills: [executing-marketing-campaigns]
+    task: |
+      Exécuter S3 (focus conversion) : concentrer budget sur top performers,
+      pousser offres de conversion, retargeting S1+S2, documenter J15-J21.
+    output: "rapport-semaine-3-brut.md"
+    validation: "Tous posts S3 publiés, budget optimisé conversion"
+    rollback: "Réduire budget si ROAS négatif"
+
+  - name: "Rapport final"
+    agent: business-analytics-reporter
+    depends_on: ["Semaine 3"]
+    skills: [data-analyst]
+    task: |
+      Rapport complet : performances globales vs objectifs, évolution hebdo des KPIs,
+      top posts et ads, audiences rentables, ROI de la campagne,
+      apprentissages et recommandations pour la prochaine campagne.
+    output: "rapport-final-campagne-facebook.md"
+    validation: "Rapport complet, tous KPIs documentés, ROI calculé"
+    rollback: "N/A - phase rapport"

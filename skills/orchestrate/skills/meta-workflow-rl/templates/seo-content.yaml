@@ -1,0 +1,77 @@
+name: seo-content
+description: "Pipeline de creation de contenu SEO standard"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Market Research"
+    agent: market-researcher
+    skills:
+      - brainstorm
+      - marketing-ideas
+    task: |
+      Recherche de marche:
+      - Target audience analysis
+      - Competitor content analysis
+      - Content gaps identification
+      - Keyword opportunities
+    output: "market-research.md"
+    validation: "Research complete"
+    rollback: "Approfondir"
+
+  - name: "Content Strategy"
+    agent: product-manager
+    skills:
+      - content-strategy
+      - brainstorm
+    task: |
+      Definir la strategie:
+      - Content pillars
+      - Topic clusters
+      - Content calendar
+      - Distribution plan
+    output: "content-strategy.md"
+    validation: "Strategie actionable"
+    rollback: "Reviser strategie"
+    depends_on:
+      - "Market Research"
+
+  - name: "SEO Optimization"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - schema-markup
+    task: |
+      Optimiser pour SEO:
+      - Keyword mapping
+      - Meta tags templates
+      - Internal linking strategy
+      - Schema markup plan
+    output: "seo-optimization-plan.md"
+    validation: "SEO plan complet"
+    rollback: "Reviser SEO"
+    depends_on:
+      - "Content Strategy"
+
+  - name: "Content Creation"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - humanizer
+      - copywriting
+    task: |
+      Creer le contenu:
+      - Article/page writing
+      - SEO optimization integration
+      - Internal links
+      - Call-to-actions
+    output: "Contenu redige"
+    validation: "Contenu de qualite"
+    rollback: "Reviser contenu"
+    depends_on:
+      - "SEO Optimization"

@@ -1,0 +1,77 @@
+name: db-mongodb
+description: "Pipeline de setup et migration MongoDB"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Schema Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir le schema MongoDB:
+      - Collection design
+      - Document structure
+      - Embedding vs referencing
+      - Indexes planning
+      - Sharding strategy
+    output: "mongodb-schema-design.md"
+    validation: "Schema optimise"
+    rollback: "Reviser schema"
+
+  - name: "Collection Setup"
+    agent: database-admin
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Creer les collections:
+      - Collection creation scripts
+      - Schema validation rules
+      - Index creation
+      - Initial data seeding
+    output: "MongoDB collections"
+    validation: "Collections creees"
+    rollback: "Drop and recreate"
+    depends_on:
+      - "Schema Design"
+
+  - name: "Performance Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Configuration performance:
+      - Connection pooling
+      - Read preferences
+      - Write concerns
+      - Aggregation pipeline optimization
+      - Replica set si necessaire
+    output: "Configuration production"
+    validation: "Performance OK"
+    rollback: "Ajuster config"
+    depends_on:
+      - "Collection Setup"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser MongoDB:
+      - Authentication setup
+      - Role-based access
+      - Network encryption
+      - Field-level encryption
+      - Audit logging
+    output: "mongodb-security.md"
+    validation: "Security OK"
+    rollback: "Document gaps"
+    depends_on:
+      - "Performance Setup"

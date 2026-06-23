@@ -1,0 +1,161 @@
+name: tier-detector
+description: "Detecte automatiquement le tier de complexite d'une demande utilisateur"
+category: system
+
+# PROTECTION - Desactivee pour ce workflow d'analyse pure
+# Ce workflow ne modifie aucun fichier, il analyse seulement
+protection:
+  before: null
+  after: null
+
+# Skills injectes a TOUTES les etapes
+skills_global:
+  - brainstorm
+
+steps:
+  - name: "Analyze Request Complexity"
+    agent: business-analyst
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Analyser la demande utilisateur selon ces criteres:
+
+      1. DOMAINES IMPACTES
+         - Backend (Laravel, API, DB)
+         - Frontend (React, UI, State)
+         - Mobile (React Native, Expo)
+         - Infrastructure (DevOps, CI/CD, Terraform)
+         - Documentation (README, API docs)
+         - SEO/Marketing (Content, Analytics)
+
+      2. MATCHING TEMPLATES
+         Verifier si un template existant correspond parmi les 45 disponibles:
+         - feature-dev, api-contract, db-postgresql, deploy-production...
+         - Voir ~/.claude/skills/workflow/templates/ pour la liste complete
+
+      3. NIVEAU D'AMBIGUITE
+         - LOW: Requirements clairs, scope defini, criteres acceptation explicites
+         - MEDIUM: Quelques zones d'ombre, besoin de clarification mineure
+         - HIGH: Scope flou, objectifs multiples, risque de scope creep
+
+      4. ESTIMATION FICHIERS
+         - Nombre approximatif de fichiers a creer/modifier
+         - Types de fichiers (code, config, docs)
+    output: |
+      complexity_score: 0-100
+      domains_count: N
+      domains_list: [liste des domaines impactes]
+      matching_templates: [liste des templates correspondants]
+      best_template_match: "nom du template le plus pertinent ou null"
+      ambiguity_level: low|medium|high
+      estimated_files: N
+      analysis_notes: "Observations supplementaires"
+    validation: "Score calcule, domaines identifies, templates evalues"
+    rollback: "Demander clarification si analyse impossible"
+
+  - name: "Determine Tier"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Base sur l'analyse de complexite, determiner le tier approprie:
+
+      TIER_0 - Mode Simple (Bypass)
+      ---------------------------------
+      Conditions:
+        - complexity_score < 20
+        - domains_count == 1
+        - ambiguity_level == "low"
+        - estimated_files <= 3
+      Action: Execution directe sans Master Plan
+
+      TIER_1 - Mode Template (Router)
+      ---------------------------------
+      Conditions:
+        - matching_templates non vide
+        - best_template_match existe
+        - ambiguity_level != "high"
+      Action: Router vers le template existant le plus pertinent
+
+      TIER_2 - Mode Planifie (Master Plan)
+      ---------------------------------
+      Conditions:
+        - complexity_score entre 20 et 70
+        - ambiguity_level != "high"
+        - Pas de template exact correspondant
+      Action: Creer Master Plan, decomposer en taches, executer en waves
+
+      TIER_3 - Mode Custom (Workflow sur mesure)
+      ---------------------------------
+      Conditions:
+        - complexity_score > 70
+        - OU ambiguity_level == "high"
+        - OU domains_count > 4
+        - OU estimated_files > 20
+      Action: Creer workflow sur mesure + validation humaine obligatoire
+
+      MATRICE DE DECISION:
+
+      | Score | Domaines | Ambiguite | Template? | => TIER |
+      |-------|----------|-----------|-----------|---------|
+      | <20   | 1        | low       | -         | TIER_0  |
+      | any   | any      | any       | exact     | TIER_1  |
+      | 20-70 | 2-4      | low/med   | partial   | TIER_2  |
+      | >70   | any      | any       | -         | TIER_3  |
+      | any   | any      | high      | -         | TIER_3  |
+    output: |
+      tier: TIER_0|TIER_1|TIER_2|TIER_3
+      tier_name: "Simple|Template|Planned|Custom"
+      recommended_action: "Description detaillee de l'action recommandee"
+      template_suggestion: "Nom du template si TIER_1, null sinon"
+      requires_human_validation: true|false
+      confidence_score: 0-100
+      decision_rationale: "Justification du choix de tier"
+      next_steps: |
+        - Etape 1
+        - Etape 2
+        - ...
+    validation: "Tier determine avec justification complete"
+    rollback: "Escalader vers TIER_3 en cas de doute"
+    depends_on:
+      - "Analyze Request Complexity"
+
+  - name: "Generate Routing Instructions"
+    agent: project-supervisor
+    skills:
+      - brainstorm
+    task: |
+      Generer les instructions de routage pour le skill orchestrate:
+
+      TIER_0:
+        - Retourner action directe a executer
+        - Pas de Master Plan
+        - Agent unique suggere
+
+      TIER_1:
+        - Retourner commande /workflow <template>
+        - Parametres pre-remplis si possible
+
+      TIER_2:
+        - Retourner structure Master Plan a creer
+        - Liste des waves et taches
+        - Agents assignes par tache
+
+      TIER_3:
+        - Retourner demande de validation humaine
+        - Questions de clarification
+        - Risques identifies
+        - Proposition de decomposition a valider
+    output: |
+      routing_type: direct|workflow|masterplan|human_validation
+      command: "Commande a executer si applicable"
+      masterplan_structure: "Structure si TIER_2"
+      validation_questions: ["Questions si TIER_3"]
+      assigned_agents: ["Liste des agents necessaires"]
+      estimated_duration: "Estimation temps"
+    validation: "Instructions de routage completes et actionables"
+    rollback: "Retour a l'analyse si routage impossible"
+    depends_on:
+      - "Determine Tier"

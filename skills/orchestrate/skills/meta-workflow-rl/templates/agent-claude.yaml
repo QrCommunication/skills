@@ -1,0 +1,97 @@
+name: agent-claude
+description: "Pipeline de creation d'agent Claude Code"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Agent Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - create-agent
+      - mermaid-diagrams
+    task: |
+      Concevoir l'agent:
+      - Role et responsabilites
+      - Capabilities
+      - Behavior patterns
+      - Skills requis
+      - Input/output formats
+      - Integration points
+    output: "agent-design.md"
+    validation: "Design complet"
+    rollback: "Reviser design"
+
+  - name: "Agent Implementation"
+    agent: tech-lead
+    skills:
+      - create-agent
+      - meta-subagent-creator
+      - git:commit
+    task: |
+      Implementer l'agent:
+      - Agent markdown file
+      - Behavior description
+      - Skills integration
+      - Error handling
+      - Examples
+    output: "~/.claude/agents/new-agent.md"
+    validation: "Agent bien structure"
+    rollback: "Reviser implementation"
+    depends_on:
+      - "Agent Design"
+
+  - name: "Prompt Engineering"
+    agent: tech-lead
+    skills:
+      - create-prompt
+      - meta-prompt-creator
+    task: |
+      Optimiser les prompts:
+      - System prompt
+      - Task templates
+      - Few-shot examples
+      - Chain-of-thought patterns
+    output: "Prompts optimises"
+    validation: "Prompts efficaces"
+    rollback: "Iterer prompts"
+    depends_on:
+      - "Agent Implementation"
+
+  - name: "Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tester l'agent:
+      - Happy path tests
+      - Edge cases
+      - Error handling
+      - Performance tests
+    output: "test-report.md"
+    validation: "Agent fonctionne correctement"
+    rollback: "Fix issues"
+    depends_on:
+      - "Prompt Engineering"
+
+  - name: "Documentation"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - crafting-effective-readmes
+    task: |
+      Documenter l'agent:
+      - Usage guide
+      - Examples
+      - Troubleshooting
+      - Integration instructions
+    output: "Agent documente"
+    validation: "Documentation complete"
+    rollback: "Completer documentation"
+    depends_on:
+      - "Testing"

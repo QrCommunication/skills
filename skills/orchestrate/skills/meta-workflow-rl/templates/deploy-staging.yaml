@@ -1,0 +1,72 @@
+name: deploy-staging
+description: "Pipeline de deploiement en staging"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Pre-deployment Checks"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Verifications pre-deploy:
+      - CI tests passent
+      - No blocking vulnerabilities
+      - Environment variables set
+      - Database migrations ready
+    output: "staging-checklist.md"
+    validation: "Toutes checks passent"
+    rollback: "Fix issues first"
+
+  - name: "Staging Deploy"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Deployer sur staging:
+      - Deploy application
+      - Run migrations
+      - Seed test data if needed
+      - Verify health checks
+    output: "Deployment staging complete"
+    validation: "Health checks OK"
+    rollback: "Rollback staging"
+    depends_on:
+      - "Pre-deployment Checks"
+
+  - name: "QA Validation"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Valider sur staging:
+      - Smoke tests
+      - Critical path tests
+      - Visual regression
+      - Performance check
+    output: "staging-qa-report.md"
+    validation: "Staging stable"
+    rollback: "Liste bugs a corriger"
+    depends_on:
+      - "Staging Deploy"
+
+  - name: "Security Scan"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Scan securite staging:
+      - Security headers check
+      - SSL configuration
+      - Exposed endpoints review
+    output: "staging-security.md"
+    validation: "No critical issues"
+    rollback: "Fix security issues"
+    depends_on:
+      - "QA Validation"

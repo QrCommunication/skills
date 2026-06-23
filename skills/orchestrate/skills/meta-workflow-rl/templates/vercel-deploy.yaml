@@ -1,0 +1,75 @@
+name: vercel-deploy
+description: "Pipeline de deploiement Vercel/Edge"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - vercel-react-best-practices
+
+steps:
+  - name: "Project Setup"
+    agent: tech-lead
+    skills:
+      - ultrathink
+    task: |
+      Configurer le projet Vercel:
+      - Framework detection
+      - Build settings
+      - Environment variables
+      - Domain configuration
+    output: "vercel-setup.md"
+    validation: "Projet configure"
+    rollback: "Reviser configuration"
+
+  - name: "Vercel Configuration"
+    agent: vercel-deployment-specialist
+    skills:
+      - vercel-react-best-practices
+      - git:commit
+    task: |
+      Configurer vercel.json:
+      - Build configuration
+      - Rewrites/redirects
+      - Headers
+      - Edge functions if needed
+      - Cron jobs if needed
+    output: "vercel.json configure"
+    validation: "Configuration valide"
+    rollback: "Fix config"
+    depends_on:
+      - "Project Setup"
+
+  - name: "DevOps Integration"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Integrer CI/CD:
+      - GitHub integration
+      - Preview deployments
+      - Production deployment rules
+      - Environment variable management
+    output: "CI/CD configure"
+    validation: "Deployments fonctionnent"
+    rollback: "Fix integration"
+    depends_on:
+      - "Vercel Configuration"
+
+  - name: "Security Verification"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Verifier securite:
+      - Environment variables secured
+      - Edge function security
+      - CORS configuration
+      - Authentication if needed
+    output: "vercel-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "DevOps Integration"

@@ -1,0 +1,90 @@
+name: disaster-recovery
+description: "Pipeline de creation de plan DR"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Risk Assessment"
+    agent: devops-infra
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Evaluer les risques:
+      - Critical systems identification
+      - Failure scenarios
+      - Impact analysis
+      - Recovery priorities (RTO/RPO)
+    output: "risk-assessment.md"
+    validation: "Assessment complete"
+    rollback: "Approfondir analyse"
+
+  - name: "Backup Strategy"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+    task: |
+      Definir la strategie backup:
+      - Backup schedule
+      - Retention policy
+      - Offsite storage
+      - Encryption requirements
+    output: "backup-strategy.md"
+    validation: "Strategie definie"
+    rollback: "Reviser strategie"
+    depends_on:
+      - "Risk Assessment"
+
+  - name: "Recovery Procedures"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Creer les procedures:
+      - Step-by-step recovery
+      - Runbooks
+      - Automation scripts
+      - Communication plan
+    output: "dr-procedures/"
+    validation: "Procedures completes"
+    rollback: "Reviser procedures"
+    depends_on:
+      - "Backup Strategy"
+
+  - name: "Security Review"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Review securite DR:
+      - Backup encryption
+      - Access controls
+      - Audit logging
+      - Compliance requirements
+    output: "dr-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "Recovery Procedures"
+
+  - name: "DR Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tester le plan DR:
+      - Tabletop exercise
+      - Partial recovery test
+      - Documentation update
+      - Lessons learned
+    output: "dr-test-report.md"
+    validation: "DR teste"
+    rollback: "Update procedures"
+    depends_on:
+      - "Security Review"

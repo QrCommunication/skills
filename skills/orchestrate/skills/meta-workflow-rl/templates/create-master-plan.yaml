@@ -1,0 +1,207 @@
+name: create-master-plan
+description: "Cree un Master Plan structure pour une demande complexe - Utilise par orchestrate en TIER_2"
+
+# PROTECTION OBLIGATOIRE - Toujours present, jamais desactivable
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+# Category systeme pour templates internes
+category: system
+
+# Skills injectes a TOUTES les etapes
+skills_global:
+  - brainstorm
+  - ultrathink
+
+steps:
+  - name: "Deep Analysis"
+    agent: business-analyst
+    skills:
+      - brainstorm
+      - explore
+    task: |
+      Analyser en profondeur la demande:
+      1. Identifier tous les domaines impactes (backend, frontend, mobile, database, infra, etc.)
+      2. Lister les dependances entre composants
+      3. Identifier les risques potentiels (techniques, fonctionnels, securite)
+      4. Estimer la charge par domaine (T-shirt sizing: XS, S, M, L, XL)
+
+      Contexte a considerer:
+      - Stack technique du projet (CLAUDE.md)
+      - Contraintes de conformite (RGPD, HDS, eIDAS si applicable)
+      - Ressources agents disponibles
+    output: |
+      domains:
+        - name: "Nom du domaine"
+          impact_level: "HIGH|MEDIUM|LOW"
+          dependencies: ["liste des domaines dependants"]
+          estimate: "T-shirt size"
+          agent_suggested: "agent-name"
+      risks:
+        - description: "Description du risque"
+          probability: "HIGH|MEDIUM|LOW"
+          impact: "HIGH|MEDIUM|LOW"
+          mitigation: "Strategie de mitigation"
+      total_estimate: "Estimation globale en jours/heures"
+      complexity_tier: "TIER_1|TIER_2|TIER_3"
+    validation: "Tous les domaines identifies avec dependances et agents suggeres"
+    rollback: "Demander clarification a l'utilisateur si demande ambigue"
+
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture de la solution:
+      1. Definir les waves d'execution:
+         - Wave -1: Impact analysis (OBLIGATOIRE)
+         - Wave 0: Legal/GDPR checks, API contracts
+         - Wave 1: Data layer (migrations, models, seeders)
+         - Wave 2: API layer (controllers, routes, resources, policies)
+         - Wave 3: TypeScript layer (types, hooks, data providers)
+         - Wave 4: UI Components (atoms, molecules, organisms)
+         - Wave 5: Pages, layouts, navigation
+         - Wave 6: Tests, security audit, performance
+         - Wave 7: Documentation, SEO, CI/CD
+         - Wave 8: Anti-regression validation (OBLIGATOIRE)
+      2. Assigner les agents par tache
+      3. Definir les contrats API si necessaire (endpoints, payloads, responses)
+      4. Creer le diagramme de dependances en Mermaid
+
+      Respecter les dependances identifiees dans l'analyse.
+    output: |
+      waves:
+        - number: -1
+          name: "Impact Analysis"
+          tasks:
+            - name: "Analyse d'impact"
+              agent: impact-analyzer
+              dependencies: []
+        - number: 0
+          name: "Contracts & Compliance"
+          tasks:
+            - name: "Tache description"
+              agent: "agent-name"
+              dependencies: ["task dependencies"]
+      api_contracts:
+        - endpoint: "/api/v1/resource"
+          method: "GET|POST|PUT|DELETE"
+          payload: "Schema du payload"
+          response: "Schema de la reponse"
+          auth: "required|optional|none"
+      architecture_diagram: |
+        ```mermaid
+        graph TD
+          A[Demande] --> B[Analysis]
+          B --> C[Design]
+          ...
+        ```
+    validation: "Waves definies avec agents assignes et dependances resolues"
+    rollback: "Revenir a l'analyse si architecture impossible"
+    depends_on:
+      - "Deep Analysis"
+
+  - name: "Generate Master Plan"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - crafting-effective-readmes
+    task: |
+      Generer le fichier L0_MASTER_PLAN.md dans .claude/{SESSION_ID}/:
+
+      Structure obligatoire:
+
+      # L0 MASTER PLAN - {SESSION_ID}
+
+      ## Mission
+      {Description claire de l'objectif}
+
+      ## Constraints & Compliance
+      - RGPD: {oui/non + details}
+      - HDS: {oui/non si sante}
+      - eIDAS: {oui/non si signatures}
+      - Autres: {contraintes specifiques}
+
+      ## Identified Domains
+      | Domain | Agent | Impact | Estimate | Status |
+      |--------|-------|--------|----------|--------|
+      | ... | @agent-name | HIGH/MED/LOW | XS-XL | PENDING |
+
+      ## Execution Waves
+      ### Wave -1: Impact Analysis
+      - [ ] Task description (@agent)
+
+      ### Wave 0: Contracts
+      ...
+
+      ## API Contracts (si applicable)
+      ### Endpoint: /api/v1/...
+      ...
+
+      ## Risks & Mitigations
+      | Risk | Probability | Impact | Mitigation |
+      ...
+
+      ## Architecture Diagram
+      {Mermaid diagram}
+
+      ## Session Metadata
+      - Created: {timestamp}
+      - Last updated: {timestamp}
+      - Status: PLANNING|IN_PROGRESS|COMPLETED
+    output: "L0_MASTER_PLAN.md complet et structure dans .claude/{SESSION_ID}/"
+    validation: "Fichier cree avec toutes les sections obligatoires"
+    rollback: "Regenerer avec sections manquantes"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Validate Plan"
+    agent: project-supervisor
+    skills:
+      - brainstorm
+    task: |
+      Valider le Master Plan genere:
+
+      Checklist de validation:
+      1. Coherence des waves:
+         - Chaque wave ne depend que de waves precedentes
+         - Pas de dependances circulaires
+         - Wave -1 et Wave 8 presentes (protection)
+
+      2. Couverture des domaines:
+         - Tous les domaines identifies ont des taches assignees
+         - Chaque tache a un agent responsable
+         - Les estimations sont coherentes
+
+      3. Contrats API:
+         - Si API necessaire, contrats definis
+         - Coherence frontend/backend
+
+      4. Risques:
+         - Tous les risques HIGH ont une mitigation
+         - Pas de risque bloquant non adresse
+
+      5. Conformite:
+         - Contraintes RGPD/HDS/eIDAS respectees
+         - Agents compliance impliques si necessaire
+
+      En cas de probleme, lister les issues a corriger.
+    output: |
+      validation_status: "APPROVED|NEEDS_REVISION"
+      checklist:
+        waves_coherent: true|false
+        domains_covered: true|false
+        contracts_defined: true|false|N/A
+        risks_mitigated: true|false
+        compliance_ok: true|false
+      issues:
+        - issue: "Description du probleme"
+          severity: "BLOCKER|MAJOR|MINOR"
+          suggestion: "Comment corriger"
+      next_action: "Proceed with execution|Revise plan|Request clarification"
+    validation: "Plan valide sans BLOCKER, pret pour execution"
+    rollback: "Retour a Architecture Design pour revision"
+    depends_on:
+      - "Generate Master Plan"

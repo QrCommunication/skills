@@ -1,0 +1,77 @@
+name: n8n-automation
+description: "Pipeline de creation de workflow n8n"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Workflow Design"
+    agent: tech-lead
+    skills:
+      - brainstorm
+      - mermaid-diagrams
+    task: |
+      Concevoir le workflow:
+      - Trigger definition
+      - Step sequence
+      - Data transformations
+      - Error handling
+      - Retry strategy
+      - Integrations requises
+    output: "workflow-design.md"
+    validation: "Design complet"
+    rollback: "Reviser design"
+
+  - name: "n8n Implementation"
+    agent: n8n-specialist
+    skills:
+      - n8n-workflow-patterns
+      - n8n-node-configuration
+    task: |
+      Implementer le workflow n8n:
+      - Nodes configuration
+      - Expressions
+      - Credentials setup
+      - Error handling nodes
+      - Testing nodes
+    output: "Workflow n8n fonctionnel"
+    validation: "Workflow execute correctement"
+    rollback: "Fix workflow"
+    depends_on:
+      - "Workflow Design"
+
+  - name: "Integration Testing"
+    agent: integration-specialist
+    skills:
+      - apex
+    task: |
+      Tester les integrations:
+      - Trigger tests
+      - API connections
+      - Data flow tests
+      - Error scenarios
+    output: "integration-report.md"
+    validation: "Integrations stables"
+    rollback: "Fix integrations"
+    depends_on:
+      - "n8n Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests complets:
+      - End-to-end tests
+      - Edge cases
+      - Volume tests
+      - Timeout handling
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "Integration Testing"

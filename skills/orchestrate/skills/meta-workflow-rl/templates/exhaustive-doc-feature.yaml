@@ -1,0 +1,775 @@
+name: exhaustive-doc-feature
+description: "Production exhaustive de documentation technique (dev), publique (utilisateur) et marketing/commerciale pour une feature ou application. Integre les skills readme, changelog-automation, docs-updater, quality-documentation-manager et documentation-writing."
+
+# PROTECTION OBLIGATOIRE
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+# Skills globaux injectes a TOUTES les etapes
+skills_global:
+  - writing-clearly-and-concisely
+  - humanizer
+  - clean-code
+  - review-code
+  - documentation-writing      # Eight Rules + Diataxis framework sur tout le corpus
+
+steps:
+  # =========================================================================
+  # WAVE 1 - DISCOVERY (Parallele)
+  # Objectif: Cartographier code, business, docs existantes et delta git
+  # =========================================================================
+
+  - name: "Exploration Exhaustive Codebase"
+    agent: explore-codebase
+    parallel_group: "discovery"
+    parallel_split: 5
+    skills:
+      - explore
+      - ultrathink
+    task: |
+      Explorer exhaustivement l'application/feature pour comprendre:
+      - Architecture globale (monorepo, services, packages, modules)
+      - Technologies utilisees (frameworks, langages, outils, versions)
+      - Structure des dossiers et conventions de nommage
+      - Points d'entree principaux (API endpoints, CLI, UI routes)
+      - Dependances externes et internes
+      - Configurations (env, CI/CD, docker, infra)
+      - Flux de donnees principaux (input -> traitement -> output)
+      - Mecanismes d'authentification et autorisation
+      - Gestion d'erreurs et logging
+      - Schemas de base de donnees et relations
+
+      DETECTION DEPLOYMENT TARGET (requis par /readme):
+      Identifier la plateforme de deploiement via les fichiers de config:
+      - Dockerfile / docker-compose.yml -> Docker
+      - fly.toml -> Fly.io
+      - render.yaml -> Render
+      - vercel.json -> Vercel
+      - Procfile -> Heroku
+      - config/deploy.yml -> Kamal
+      - k8s/ / kubernetes/ -> Kubernetes
+      - serverless.yml -> Serverless
+      - app.yaml -> Google App Engine
+      - terraform/ -> IaC
+    output: "audit-codebase.md avec cartographie technique complete + deployment target detecte"
+    validation: "Architecture documentee, tous les modules couverts, plateforme de deploy identifiee"
+    rollback: "N/A - audit only"
+
+  - name: "Analyse Business et Produit"
+    agent: business-analyst
+    parallel_group: "discovery"
+    skills:
+      - brainstorm
+      - gepetto
+    task: |
+      Analyser la valeur business et produit de la feature/application:
+      - Proposition de valeur unique (USP)
+      - Public cible (personas: developpeurs, utilisateurs finaux, decideurs)
+      - Problemes resolus et benefices concrets
+      - Cas d'usage principaux et secondaires
+      - Avantages concurrentiels
+      - Metriques de succes (KPI)
+      - Parcours utilisateur type (user journey)
+      - Points de friction potentiels
+      - Terminologie metier a utiliser
+    output: "analyse-business.md avec personas, USP et cas d'usage"
+    validation: "Personas definis, cas d'usage couverts, USP claire"
+    rollback: "N/A - analyse only"
+
+  - name: "Audit Documentation Existante (Diataxis + Eight Rules)"
+    agent: technical-writer
+    parallel_group: "discovery"
+    skills:
+      - explore
+      - crafting-effective-readmes
+      - documentation-writing    # Applique le framework Diataxis et Eight Rules pour l'audit
+    task: |
+      Inventorier et evaluer la documentation existante selon le framework
+      Diataxis (/documentation-writing) et les Eight Rules:
+
+      1. INVENTAIRE:
+         - Fichiers doc existants (README, CLAUDE.md, docs/, wiki, CHANGELOG)
+         - Assets visuels existants (images, diagrammes, screenshots)
+
+      2. AUDIT DIATAXIS - classer chaque doc existant:
+         - Tutorial (docs/tutorials/) -> apprentissage guide
+         - How-To (docs/howto/) -> resolution de probleme
+         - Reference (docs/reference/) -> information exhaustive
+         - Explanation (docs/concepts/) -> comprehension approfondie
+         - Identifier les docs qui melangent les types (anti-pattern Diataxis)
+
+      3. AUDIT EIGHT RULES:
+         - Location: docs dans docs/ ? ou eparpilles ?
+         - Linking: chaque doc liee depuis au moins une autre ?
+         - Simplicity: langage clair, mots superflus ?
+         - Real Examples: exemples executables ou "foo/bar" ?
+         - Scanability: titres descriptifs, TOC pour les longs docs ?
+         - Local Links: liens relatifs avec contexte ?
+         - Currency: docs obsoletes ? metadata de mise a jour ?
+
+      4. GAPS PAR AUDIENCE:
+         - Developpeurs: quels docs manquent ?
+         - Utilisateurs finaux: onboarding, guides ?
+         - Marketing/decideurs: one-pager, highlights ?
+
+      5. CONTENU TEMPOREL A DEPLACER:
+         - Status reports -> GitHub Issues
+         - Test results -> CI logs
+         - Decisions -> commit messages ou ADR
+    output: "audit-docs.md avec inventaire, scoring Diataxis/Eight Rules, gaps par audience"
+    validation: "Inventaire complet, chaque doc score sur les 8 regles, gaps documentes par type Diataxis"
+    rollback: "N/A - audit only"
+
+  - name: "Analyse Delta Git (docs-updater)"
+    agent: technical-writer
+    parallel_group: "discovery"
+    skills:
+      - changelog-automation     # Format Keep a Changelog + conventional commits
+    task: |
+      Analyser le delta git depuis le dernier tag release (methode /docs-updater):
+
+      1. DETECTER LE DERNIER TAG:
+         ```
+         LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+         ```
+         Si aucun tag, noter "Pas de tag release - changelog from scratch"
+
+      2. ANALYSER LES CHANGEMENTS (si tag existe):
+         - Nombre de commits depuis le tag
+         - Fichiers ajoutes/modifies/supprimes (git diff --stat)
+         - Commit messages categories par conventional commits:
+           * feat -> Added
+           * fix -> Fixed
+           * refactor -> Changed
+           * perf -> Changed (Performance)
+           * BREAKING CHANGE -> Breaking Changes
+         - Composants/modules impactes (par path)
+
+      3. DETECTER LA STRUCTURE DOCS EXISTANTE:
+         - Dossiers docs/ , documentation/ , doc/
+         - Docs specifiques aux plugins/packages
+         - CHANGELOG.md existant ? format actuel ?
+
+      4. IDENTIFIER LES DOCS DESYNCHRONISEES:
+         - Fichiers modifies sans mise a jour doc correspondante
+         - Nouvelles features sans documentation
+         - APIs modifiees avec docs API obsoletes
+    output: "delta-git.md avec changelog draft, fichiers desynchronises, composants impactes"
+    validation: "Delta complet, changelog categorise, desync identifiees"
+    rollback: "N/A - analyse only"
+
+  # =========================================================================
+  # WAVE 2 - PLANIFICATION (Sequentiel, attend discovery)
+  # Objectif: Plan multi-audience + structure Diataxis + storyboard visuel
+  # =========================================================================
+
+  - name: "Plan de Documentation Multi-Audience (Diataxis)"
+    agent: tech-lead
+    depends_on: ["discovery"]
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+      - gepetto
+      - documentation-writing    # Structure selon Diataxis
+    task: |
+      Definir le plan de documentation complet pour les 3 audiences,
+      structure selon le framework Diataxis (/documentation-writing):
+
+      A. DOCUMENTATION TECHNIQUE (Developpeurs):
+         Structure Diataxis:
+         - docs/tutorials/getting-started-dev.md (Tutorial)
+         - docs/howto/contributing.md (How-To)
+         - docs/howto/deployment.md (How-To)
+         - docs/reference/api-reference.md (Reference)
+         - docs/reference/database.md (Reference)
+         - docs/reference/env-variables.md (Reference)
+         - docs/concepts/architecture.md (Explanation)
+         - docs/concepts/adr/ (Explanation - Architecture Decision Records)
+         - docs/howto/troubleshooting.md (How-To)
+
+         README.md (via /readme):
+         - Les 11 sections standard du skill /readme
+         - Detection auto du deployment target
+         - Absurdly thorough approach
+
+      B. DOCUMENTATION PUBLIQUE (Utilisateurs finaux):
+         Structure Diataxis:
+         - docs/public/tutorials/getting-started.md (Tutorial)
+         - docs/public/tutorials/use-case-*.md (Tutorial - par cas d'usage)
+         - docs/public/howto/user-guide.md (How-To)
+         - docs/public/reference/faq.md (Reference)
+         - docs/public/reference/glossary.md (Reference)
+         - docs/public/concepts/what-is-*.md (Explanation)
+
+      C. DOCUMENTATION MARKETING (Decideurs/Prospects):
+         - docs/marketing/one-pager.md
+         - docs/marketing/feature-highlights.md
+         - docs/marketing/landing-page-copy.md
+         - docs/marketing/email-launch.md
+         - docs/marketing/social-media-kit.md
+         - docs/marketing/competitive-comparison.md
+
+      D. CHANGELOG & RELEASE NOTES:
+         - CHANGELOG.md (Keep a Changelog via /changelog-automation)
+         - docs/public/changelog.md (user-friendly via /docs-updater)
+
+      Pour chaque document:
+      - Type Diataxis (Tutorial/HowTo/Reference/Explanation)
+      - Format (MD, PDF, HTML)
+      - Visuels necessaires
+      - Ton et style
+      - Longueur cible
+      - Liens vers/depuis les autres docs (Eight Rules: Linking)
+    output: "plan-documentation.md avec structure Diataxis, matrice de liens, visuels identifies"
+    validation: "Plan Diataxis respecte, chaque doc = 1 type, matrice de liens coherente"
+    rollback: "Reviser le plan avec feedback"
+
+  - name: "Storyboard Visuel"
+    agent: designer-ui-ux
+    skills:
+      - ui-ux-pro-max
+      - mermaid-diagrams
+    task: |
+      Planifier tous les assets visuels necessaires:
+      - Liste des diagrammes d'architecture (Mermaid)
+      - Liste des screenshots a capturer
+      - Liste des illustrations/schemas a generer
+      - Liste des icones et badges necessaires
+      - Charte visuelle de la documentation (couleurs, typo)
+      - Template pour les images de feature highlights
+      - Maquettes des visuels marketing (hero image, feature cards)
+      Produire un brief creatif pour chaque visuel a generer.
+    output: "storyboard-visuel.md avec liste et brief de chaque asset"
+    validation: "Tous les visuels identifies avec brief creatif"
+    rollback: "Completer les visuels manquants"
+    depends_on:
+      - "Plan de Documentation Multi-Audience (Diataxis)"
+
+  # =========================================================================
+  # WAVE 3 - PRODUCTION TECHNIQUE + VISUELS (Parallele)
+  # Objectif: README via /readme, docs techniques Diataxis, assets visuels
+  # =========================================================================
+
+  - name: "README.md Principal (skill /readme)"
+    agent: technical-writer
+    parallel_group: "production"
+    skills:
+      - readme                   # Skill /readme - 11 sections, absurdly thorough
+      - crafting-effective-readmes
+      - mermaid-diagrams
+    task: |
+      Generer le README.md principal en suivant le skill /readme:
+
+      METHODE (3 etapes du skill /readme):
+      1. Deep Codebase Exploration (utiliser audit-codebase.md comme base)
+      2. Identify Deployment Target (utiliser le deployment target detecte en Wave 1)
+      3. Ask Only If Critical
+
+      STRUCTURE OBLIGATOIRE (11 sections /readme):
+      1. Project Title and Overview (description + Key Features)
+      2. Tech Stack (toutes les technologies listees)
+      3. Prerequisites (ce qui doit etre installe)
+      4. Getting Started (clone, install, env, DB, start - copy-pasteable)
+      5. Architecture Overview (directory structure, request lifecycle, data flow,
+         key components, database schema - "absurdly deep")
+      6. Environment Variables (Required + Optional + environment-specific)
+      7. Available Scripts (tableau commande -> description)
+      8. Testing (running, structure, writing examples)
+      9. Deployment (adapte au target detecte: Kamal, Docker, Heroku, Fly.io, Render, VPS)
+      10. Troubleshooting (erreurs communes avec solutions)
+      11. Contributing (si open source / equipe)
+
+      PRINCIPES /readme:
+      - Be Absurdly Thorough
+      - Use Code Blocks Liberally (copy-pasteable)
+      - Show Example Output
+      - Explain the Why
+      - Assume Fresh Machine
+      - Use Tables for Reference
+      - Include Table of Contents si > 200 lignes
+    output: "README.md complet avec les 11 sections du skill /readme"
+    validation: "Toutes les 11 sections presentes, commandes copy-pasteable, deployment target correct"
+    rollback: "Completer les sections manquantes"
+    depends_on:
+      - "Storyboard Visuel"
+
+  - name: "Documentation Technique Diataxis"
+    agent: technical-writer
+    parallel_group: "production"
+    skills:
+      - documentation-writing    # Framework Diataxis + Eight Rules
+      - mermaid-diagrams
+      - documentation-templates
+    task: |
+      Rediger la documentation technique pour developpeurs en suivant
+      le framework Diataxis (/documentation-writing):
+
+      TUTORIALS (docs/tutorials/):
+      1. docs/tutorials/getting-started-dev.md:
+         - Onboarding developpeur en 10 minutes
+         - Setup complet pas-a-pas
+         - Premier build + premier test reussi
+         - Type Diataxis: TUTORIAL (learning-oriented)
+
+      HOW-TO GUIDES (docs/howto/):
+      2. docs/howto/contributing.md:
+         - Conventions de code et nommage
+         - Workflow Git (branches, commits, PR)
+         - Tests et coverage
+         - Type Diataxis: HOW-TO (task-oriented)
+
+      3. docs/howto/deployment.md:
+         - Procedures de deploiement
+         - Variables d'environnement
+         - Monitoring et alerting
+         - Type Diataxis: HOW-TO (task-oriented)
+
+      4. docs/howto/troubleshooting.md:
+         - Erreurs communes et solutions
+         - FAQ technique
+         - Debug tips
+         - Type Diataxis: HOW-TO (task-oriented)
+
+      REFERENCE (docs/reference/):
+      5. docs/reference/api-reference.md:
+         - Tous les endpoints avec methode, path, params, body, response
+         - Exemples curl, JavaScript, Python
+         - Codes d'erreur et gestion
+         - Type Diataxis: REFERENCE (information-oriented)
+
+      6. docs/reference/database.md:
+         - Schema ER avec diagramme Mermaid
+         - Description des tables et relations
+         - Index et contraintes
+         - Type Diataxis: REFERENCE (information-oriented)
+
+      7. docs/reference/env-variables.md:
+         - Variables required vs optional
+         - Valeurs par defaut
+         - Par environnement (dev/staging/prod)
+         - Type Diataxis: REFERENCE (information-oriented)
+
+      EXPLANATION (docs/concepts/):
+      8. docs/concepts/architecture.md:
+         - Vue d'ensemble avec diagrammes (composants, flux, deploiement)
+         - Decisions d'architecture (ADR format)
+         - Patterns utilises et justification
+         - Type Diataxis: EXPLANATION (understanding-oriented)
+
+      EIGHT RULES - verifier pour CHAQUE fichier:
+      [x] Location dans docs/
+      [x] Linked depuis docs/index.md
+      [x] Plain language, pas de mots superflus
+      [x] Real examples executables (pas foo/bar)
+      [x] Un seul type Diataxis par fichier
+      [x] Titres descriptifs + TOC si > 100 lignes
+      [x] Liens relatifs avec contexte
+      [x] Pas d'info temporelle (status, test results, plans)
+
+      Ton: precis, technique, concis. Exemples de code abondants.
+    output: "Documentation technique Diataxis (8+ fichiers dans docs/)"
+    validation: "Chaque fichier = 1 type Diataxis, Eight Rules respectees, exemples fonctionnels"
+    rollback: "Corriger les violations Diataxis/Eight Rules"
+    depends_on:
+      - "Storyboard Visuel"
+
+  - name: "Generation Assets Visuels"
+    agent: designer-ui-ux
+    parallel_group: "production"
+    skills:
+      - generate-image
+      - scientific-schematics
+      - mermaid-diagrams
+    task: |
+      Generer tous les assets visuels selon le storyboard:
+
+      1. Diagrammes techniques (Mermaid -> PNG):
+         - Architecture globale
+         - Flux de donnees
+         - Schema base de donnees
+         - Diagramme de sequence (API calls)
+
+      2. Illustrations marketing:
+         - Hero image pour landing page
+         - Feature cards (1 par feature majeure)
+         - Icones de benefices
+
+      3. Screenshots / mockups:
+         - UI principale annotee
+         - Workflow utilisateur en etapes
+
+      Utiliser /generate-image pour les illustrations
+      et /scientific-schematics pour les diagrammes techniques.
+      Sauver tous les assets dans docs/assets/
+    output: "Assets visuels dans docs/assets/ (diagrammes, illustrations, screenshots)"
+    validation: "Tous les visuels du storyboard generes en haute qualite"
+    rollback: "Regenerer les visuels defaillants"
+    depends_on:
+      - "Storyboard Visuel"
+
+  # =========================================================================
+  # WAVE 4 - DOCUMENTATION PUBLIQUE + CHANGELOG (Parallele)
+  # Objectif: Docs utilisateur Diataxis + CHANGELOG via /changelog-automation
+  # =========================================================================
+
+  - name: "Documentation Utilisateur Finale (Diataxis)"
+    agent: technical-writer
+    parallel_group: "public-and-changelog"
+    skills:
+      - humanizer
+      - writing-clearly-and-concisely
+      - gepetto
+      - documentation-writing    # Diataxis pour structurer les docs publiques
+    task: |
+      Rediger la documentation pour les utilisateurs finaux (non-techniques)
+      en suivant le framework Diataxis (/documentation-writing):
+
+      TUTORIALS (docs/public/tutorials/):
+      1. docs/public/tutorials/getting-started.md:
+         - Onboarding en 5 minutes maximum
+         - Premiere utilisation guidee pas-a-pas
+         - Captures d'ecran annotees a chaque etape
+         - Resultat attendu visible
+         - Type Diataxis: TUTORIAL
+
+      2. docs/public/tutorials/use-case-*.md (3-5 tutoriels):
+         - 1 tutoriel par cas d'usage principal
+         - Format pas-a-pas numerate avec visuels
+         - Niveau debutant a intermediaire
+         - Type Diataxis: TUTORIAL
+
+      HOW-TO GUIDES (docs/public/howto/):
+      3. docs/public/howto/user-guide.md:
+         - Tour complet des fonctionnalites
+         - Chaque feature = section avec description + screenshot + tips
+         - Navigation intuitive (table des matieres cliquable)
+         - Encadres "Astuce", "Attention", "Note"
+         - Type Diataxis: HOW-TO
+
+      REFERENCE (docs/public/reference/):
+      4. docs/public/reference/faq.md:
+         - Questions frequentes organisees par theme
+         - Reponses courtes et actionables
+         - Liens vers guide complet quand pertinent
+         - Type Diataxis: REFERENCE
+
+      5. docs/public/reference/glossary.md:
+         - Termes techniques vulgarises
+         - Definitions claires et exemples concrets
+         - Type Diataxis: REFERENCE
+
+      EXPLANATION (docs/public/concepts/):
+      6. docs/public/concepts/what-is-*.md:
+         - Explication de chaque concept cle
+         - Analogies pour non-techniques
+         - Type Diataxis: EXPLANATION
+
+      EIGHT RULES - verifier pour CHAQUE fichier:
+      [x] Tous dans docs/public/
+      [x] Lies depuis docs/public/index.md
+      [x] Zero jargon technique
+      [x] Exemples reels et executables
+      [x] 1 type Diataxis par fichier
+      [x] Titres descriptifs + TOC
+      [x] Liens relatifs avec contexte
+      [x] Pas d'info temporelle dans les docs
+
+      Ton: accessible, amical, encourageant. Zero jargon technique.
+      Toujours expliquer le "pourquoi" avant le "comment".
+    output: "Documentation utilisateur Diataxis (7+ fichiers dans docs/public/)"
+    validation: "Comprehensible par un non-technique, structure Diataxis respectee, Eight Rules OK"
+    rollback: "Simplifier les sections trop techniques, corriger les violations Diataxis"
+    depends_on:
+      - "production"
+
+  - name: "CHANGELOG et Release Notes (changelog-automation + docs-updater)"
+    agent: technical-writer
+    parallel_group: "public-and-changelog"
+    skills:
+      - changelog-automation     # Keep a Changelog, conventional commits, semver
+    task: |
+      Generer le changelog et les release notes en utilisant les methodes
+      des skills /changelog-automation et /docs-updater:
+
+      1. CHANGELOG.md TECHNIQUE (via /changelog-automation):
+         Format Keep a Changelog strict:
+         ```
+         # Changelog
+         All notable changes to this project will be documented in this file.
+         The format is based on [Keep a Changelog](https://keepachangelog.com/)
+         and this project adheres to [Semantic Versioning](https://semver.org/).
+
+         ## [Unreleased]
+         ### Added
+         ### Changed
+         ### Fixed
+         ### Deprecated
+         ### Removed
+         ### Security
+         ```
+         - Categoriser les commits par conventional commits (delta-git.md)
+         - Inclure les references aux PR/issues (#123)
+         - Liens de comparaison entre versions en footer
+         - Si aucun tag existe: creer la section [Unreleased] from scratch
+
+      2. docs/public/changelog.md USER-FRIENDLY (via /docs-updater):
+         - Format accessible non-technique
+         - Categories: "Nouveau", "Ameliore", "Corrige"
+         - Benefices utilisateur plutot que details techniques
+         - Pas de references aux commits/PR (audience non-dev)
+
+      3. RAPPORT DE SYNCHRONISATION (methode /docs-updater):
+         - Fichiers modifies sans mise a jour doc correspondante
+         - Sections README a mettre a jour
+         - Docs reference desynchronisees avec le code
+         - Actions de mise a jour recommandees
+
+      4. SETUP AUTOMATION (recommandations /changelog-automation):
+         - Recommander l'outil adapte au projet:
+           * Node.js -> standard-version ou semantic-release
+           * Python -> commitizen
+           * Universal -> git-cliff
+         - Proposer le commitlint config si absent
+         - Proposer le workflow CI release si absent
+    output: "CHANGELOG.md + docs/public/changelog.md + rapport-sync.md + recommandations-automation.md"
+    validation: "CHANGELOG Keep a Changelog valide, changelog public lisible par non-dev, sync rapport complet"
+    rollback: "Corriger le format changelog, completer le rapport sync"
+    depends_on:
+      - "production"
+
+  # =========================================================================
+  # WAVE 5 - DOCUMENTATION MARKETING (Sequentiel)
+  # =========================================================================
+
+  - name: "Documentation Marketing et Commerciale"
+    agent: business-analyst
+    skills:
+      - copywriting
+      - marketing-psychology
+      - marketing-ideas
+      - content-strategy
+    task: |
+      Produire la documentation marketing et commerciale:
+
+      1. docs/marketing/one-pager.md:
+         - Pitch produit en 1 page
+         - Probleme -> Solution -> Benefices -> CTA
+         - Chiffres cles et preuves
+         - Format imprimable
+
+      2. docs/marketing/feature-highlights.md:
+         - Chaque feature majeure avec:
+           * Titre accrocheur
+           * Benefice utilisateur (pas la feature technique)
+           * Illustration visuelle
+           * Temoignage ou proof point
+
+      3. docs/marketing/landing-page-copy.md:
+         - Hero section (headline + subheadline + CTA)
+         - Section "Probleme"
+         - Section "Solution"
+         - Section "Features" (3-5 cards)
+         - Section "Comment ca marche" (3 etapes)
+         - Section "Temoignages" (templates)
+         - Section "Pricing" (template)
+         - Section "FAQ" marketing
+         - Footer CTA
+
+      4. docs/marketing/email-launch.md:
+         - Email de teasing (J-7)
+         - Email de lancement (J-0)
+         - Email de relance (J+3)
+         - Sujet, preheader, body, CTA pour chacun
+
+      5. docs/marketing/social-media-kit.md:
+         - 5 posts LinkedIn/Twitter prets a publier
+         - Hooks et angles differents
+         - Hashtags recommandes
+         - Calendrier de publication suggere
+
+      6. docs/marketing/competitive-comparison.md:
+         - Tableau comparatif vs 3-5 concurrents
+         - Points forts differenciants
+         - Objections courantes et reponses
+
+      Ton: persuasif mais honnete. Benefices > features.
+      Storytelling et preuves sociales.
+    output: "Documentation marketing complete (6 fichiers dans docs/marketing/)"
+    validation: "Copy persuasif, CTA clairs, format pret a utiliser"
+    rollback: "Reviser le positionnement"
+    depends_on:
+      - "public-and-changelog"
+
+  # =========================================================================
+  # WAVE 6 - AUDIT QUALITE (quality-documentation-manager) + REVIEW
+  # Objectif: Audit QDM formel + review multi-audience + conformite Diataxis
+  # =========================================================================
+
+  - name: "Audit Qualite Documentation (quality-documentation-manager)"
+    agent: code-reviewer
+    parallel_group: "quality-review"
+    skills:
+      - quality-documentation-manager  # Audit framework, KPIs, document control
+      - documentation-writing          # Validation Eight Rules + Diataxis
+    task: |
+      Conduire un audit qualite formel de TOUTE la documentation produite
+      en appliquant le framework du skill /quality-documentation-manager:
+
+      1. DOCUMENT CONTROL ASSESSMENT:
+         - Classification de chaque document (type, audience, criticite)
+         - Numerotation et identification coherente
+         - Version control et revision management
+         - Statut lifecycle de chaque document
+
+      2. DOCUMENTATION QUALITY KPIs (scoring /quality-documentation-manager):
+         Pour CHAQUE document, mesurer:
+
+         | KPI | Critere | Score /10 |
+         |-----|---------|-----------|
+         | Accuracy | Exactitude technique (cross-check code) | |
+         | Compliance | Respect Diataxis + Eight Rules | |
+         | Efficiency | Temps de lecture vs completude | |
+         | Satisfaction | Clarte et accessibilite pour l'audience cible | |
+         | Consistency | Coherence terminologique inter-documents | |
+
+      3. VALIDATION DIATAXIS (/documentation-writing):
+         Pour chaque document verifier:
+         - [ ] 1 seul type Diataxis par fichier
+         - [ ] Location correcte (tutorials/, howto/, reference/, concepts/)
+         - [ ] Lie depuis au moins 1 autre doc (Eight Rules: Linking)
+         - [ ] Exemples reels et executables (pas foo/bar)
+         - [ ] Pas d'info temporelle (status, dates, resultats de tests)
+         - [ ] Titres descriptifs et scannable
+         - [ ] Liens relatifs avec contexte
+
+      4. CROSS-REFERENCE ET TRACABILITE:
+         - Verifier que tous les liens internes fonctionnent
+         - Verifier la coherence des references entre audiences
+         - Identifier les orphelins (docs non-liees)
+         - Matrice de tracabilite feature -> documentation
+
+      5. RAPPORT D'AUDIT:
+         - Score global par audience (technique, public, marketing)
+         - Score global Diataxis compliance
+         - Score global Eight Rules compliance
+         - Liste des non-conformites (critiques, majeures, mineures)
+         - Actions correctives recommandees avec priorite
+
+      Corriger directement les problemes mineurs (typos, liens, formatage).
+      Lister les problemes majeurs pour revision par les agents auteurs.
+    output: "quality-audit-report.md avec KPIs, scores, non-conformites et actions correctives"
+    validation: "Score moyen > 8/10, Diataxis compliance > 90%, zero non-conformite critique"
+    rollback: "Renvoyer aux agents auteurs pour correction des non-conformites"
+    depends_on:
+      - "Documentation Marketing et Commerciale"
+
+  - name: "Review Editoriale Multi-Audience"
+    agent: code-reviewer
+    parallel_group: "quality-review"
+    skills:
+      - humanizer
+      - writing-clearly-and-concisely
+    task: |
+      Reviser la qualite editoriale de TOUTE la documentation produite:
+
+      Criteres pour CHAQUE document:
+      - Coherence du style et du ton (adapte a l'audience)
+      - Clarte et concision des explications
+      - Orthographe et grammaire impeccables
+      - Formatage markdown/HTML correct
+      - Visuels presents et pertinents
+      - Absence de repetitions entre documents
+      - Coherence terminologique entre les 3 corpus
+
+      Verifications specifiques par audience:
+      - TECHNIQUE: precision, exemples fonctionnels, commandes copy-pasteable
+      - PUBLIC: zero jargon, ton amical, pas-a-pas clair
+      - MARKETING: hooks percutants, CTA clairs, benefices > features
+
+      Scoring par document:
+      - Clarte: /10
+      - Exactitude: /10
+      - Style: /10
+      - Completude: /10
+      - Score editorial global: /10
+
+      Corriger directement les problemes mineurs.
+      Lister les problemes majeurs pour revision.
+    output: "editorial-review-report.md avec scores et corrections"
+    validation: "Score editorial moyen > 8/10, zero erreur critique"
+    rollback: "Renvoyer aux agents auteurs pour correction"
+    depends_on:
+      - "Documentation Marketing et Commerciale"
+
+  # =========================================================================
+  # WAVE 7 - FINALISATION ET INDEX (Sequentiel)
+  # Objectif: Index Diataxis, synchronisation docs-updater, rapport final
+  # =========================================================================
+
+  - name: "Finalisation, Index et Rapport de Livraison"
+    agent: technical-writer
+    skills:
+      - crafting-effective-readmes
+      - mermaid-diagrams
+      - documentation-writing    # Index selon Eight Rules (Linking)
+    task: |
+      Finaliser l'ensemble de la documentation:
+
+      1. INDEX DIATAXIS (docs/index.md) - Eight Rules: Linking:
+         Structure par type Diataxis:
+         ```
+         # Documentation Index
+
+         ## Tutorials (Apprendre)
+         - [Getting Started Dev](tutorials/getting-started-dev.md) - Setup en 10 min
+         - [Getting Started User](public/tutorials/getting-started.md) - Demarrer en 5 min
+
+         ## How-To Guides (Faire)
+         - [Contributing](howto/contributing.md) - Contribuer au projet
+         - [Deployment](howto/deployment.md) - Deployer en production
+         - [Troubleshooting](howto/troubleshooting.md) - Resoudre les problemes
+
+         ## Reference (Consulter)
+         - [API Reference](reference/api-reference.md) - Endpoints et schemas
+         - [Database](reference/database.md) - Schema et relations
+         - [FAQ](public/reference/faq.md) - Questions frequentes
+
+         ## Explanation (Comprendre)
+         - [Architecture](concepts/architecture.md) - Decisions et patterns
+         ```
+
+      2. SOUS-INDEX PAR AUDIENCE:
+         - docs/public/index.md (utilisateurs finaux)
+         - docs/marketing/index.md (decideurs/prospects)
+
+      3. VERIFICATION COHERENCE GLOBALE:
+         - Navigation entre documents fluide
+         - Zero lien casse (verifier chaque lien)
+         - Visuels correctement references
+         - Table des matieres a jour partout
+         - Pas de doc orpheline (toutes liees depuis un index)
+
+      4. APPLICATION DES CORRECTIONS (audit + review):
+         - Integrer les corrections du quality-audit-report.md
+         - Integrer les corrections du editorial-review-report.md
+         - Marquer les non-conformites restantes
+
+      5. RAPPORT FINAL DE LIVRAISON:
+         - Nombre de documents produits par audience
+         - Nombre de mots par corpus
+         - Assets visuels crees
+         - Score qualite global (KPIs /quality-documentation-manager)
+         - Score Diataxis compliance
+         - Score Eight Rules compliance
+         - CHANGELOG status (Keep a Changelog valide ?)
+         - Rapport sync /docs-updater (docs desynchronisees restantes)
+         - Recommendations automation changelog
+         - Temps total estime de lecture par audience
+         - Suggestions d'amelioration future
+         - Skills utilises et leur contribution
+    output: "docs/index.md + sous-index + rapport-final-livraison.md"
+    validation: "Index complet et Diataxis, zero lien casse, rapport avec tous les KPIs"
+    rollback: "Corriger les liens, completer les index"
+    depends_on:
+      - "quality-review"

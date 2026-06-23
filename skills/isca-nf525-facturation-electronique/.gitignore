@@ -1,0 +1,6 @@
+# Environnement virtuel local du skill (déps de scripts/validate_facturx.py).
+# Spécifique à la plateforme : NE PAS empaqueter dans le .skill ni versionner.
+.venv/
+__pycache__/
+*.pyc
+*.skill

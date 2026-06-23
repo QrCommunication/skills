@@ -1,0 +1,102 @@
+name: feature-dev
+description: "Pipeline de developpement de feature standard - Backend + Frontend + QA"
+
+# PROTECTION OBLIGATOIRE - Toujours present, jamais desactivable
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+# Skills injectes a TOUTES les etapes
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Requirements Analysis"
+    agent: business-analyst
+    skills:
+      - brainstorm
+      - humanizer
+      - gepetto
+    task: |
+      Analyser la demande utilisateur et creer des specifications fonctionnelles:
+      - Description fonctionnelle detaillee
+      - User stories au format "En tant que... je veux... afin de..."
+      - Acceptance criteria mesurables
+      - Out of scope explicite
+    output: "specs.md avec user stories et acceptance criteria"
+    validation: "Acceptance criteria definis et mesurables"
+    rollback: "Demander clarification a l'utilisateur"
+
+  - name: "Technical Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+      - gepetto
+    task: |
+      Concevoir l'architecture technique basee sur les specs:
+      - Architecture proposee
+      - Diagrammes (sequence, classes si pertinent)
+      - Choix techniques justifies
+      - Plan de migration si breaking change
+      - Contrats API si necessaire
+    output: "design.md avec architecture et diagrammes"
+    validation: "Architecture reviewable et complete"
+    rollback: "Retour aux specs si design impossible"
+    depends_on:
+      - "Requirements Analysis"
+
+  - name: "Backend Implementation"
+    agent: backend-laravel
+    skills:
+      - apex
+      - laravel-api
+      - git:commit
+    task: |
+      Implementer le backend selon le design:
+      - Controllers, Models, Migrations
+      - Tests unitaires (coverage > 80%)
+      - Documentation API inline
+      - Respect des contrats API
+    output: "Code backend avec tests et documentation"
+    validation: "Tests passent, coverage > 80%, no linting errors"
+    rollback: "git revert backend changes"
+    depends_on:
+      - "Technical Design"
+
+  - name: "Frontend Implementation"
+    agent: frontend-react
+    skills:
+      - apex
+      - ui-ux-pro-max
+      - vercel-react-best-practices
+      - git:commit
+    task: |
+      Implementer le frontend consommant l'API:
+      - Components React/TypeScript
+      - Hooks et state management
+      - Tests unitaires
+      - Integration avec API backend
+    output: "Code frontend avec tests"
+    validation: "Tests passent, no TS errors, API integration works"
+    rollback: "git revert frontend changes"
+    depends_on:
+      - "Backend Implementation"
+
+  - name: "Quality Assurance"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+      - utils-fix-errors
+    task: |
+      Executer la suite de tests complete:
+      - Tests unitaires backend/frontend
+      - Tests d'integration
+      - Tests E2E si disponibles
+      - Performance baseline
+    output: "test-report.md avec resultats et metriques"
+    validation: "No critical/high bugs, coverage OK"
+    rollback: "Retour au developpement avec liste bugs"
+    depends_on:
+      - "Frontend Implementation"

@@ -1,0 +1,95 @@
+name: mobile-ios
+description: "Pipeline de developpement application iOS"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-native-skills
+
+steps:
+  - name: "Product Requirements"
+    agent: product-manager
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Definir requirements iOS:
+      - iOS version support (minimum)
+      - Device support (iPhone, iPad)
+      - iOS-specific features (widgets, shortcuts)
+      - App Store requirements
+    output: "ios-requirements.md"
+    validation: "Requirements complets"
+    rollback: "Clarifier requirements"
+
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - building-native-ui
+      - design-system-starter
+    task: |
+      Design iOS natif:
+      - Human Interface Guidelines compliance
+      - SF Symbols usage
+      - iOS navigation patterns
+      - Dark mode support
+    output: "ios-design-spec.md"
+    validation: "HIG compliant"
+    rollback: "Reviser design"
+    depends_on:
+      - "Product Requirements"
+
+  - name: "Implementation"
+    agent: react-native-dev
+    skills:
+      - apex
+      - building-native-ui
+      - expo-dev-client
+      - git:commit
+    task: |
+      Implementer pour iOS:
+      - iOS-specific components
+      - Native modules si necessaire
+      - Keychain integration
+      - Push notifications (APNs)
+    output: "App iOS fonctionnelle"
+    validation: "Build iOS OK"
+    rollback: "git revert"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "UI Polish"
+    agent: react-native-ui
+    skills:
+      - building-native-ui
+    task: |
+      Finaliser UI iOS:
+      - Animations natives
+      - Haptic feedback
+      - Context menus
+      - iOS gestures
+    output: "UI iOS native"
+    validation: "Feel natif"
+    rollback: "Simplifier"
+    depends_on:
+      - "Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests iOS:
+      - Simulator tests
+      - Device tests
+      - TestFlight distribution
+      - Performance profiling
+    output: "ios-test-report.md"
+    validation: "Tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "UI Polish"

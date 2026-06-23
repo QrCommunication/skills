@@ -1,0 +1,115 @@
+name: frontend-spa
+description: "Pipeline de developpement frontend SPA (React/Vue/Svelte)"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - ui-ux-pro-max
+
+steps:
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+      - mermaid-diagrams
+    task: |
+      Concevoir l'interface utilisateur:
+      - Wireframes des ecrans principaux
+      - Design system (tokens, composants)
+      - Interactions et animations
+      - Responsive breakpoints
+      - Accessibility considerations
+    output: "design-spec.md avec wireframes et design tokens"
+    validation: "Design complet et accessible"
+    rollback: "Iterer sur feedback utilisateur"
+
+  - name: "Component Architecture"
+    agent: frontend-react
+    skills:
+      - vercel-composition-patterns
+      - vercel-react-best-practices
+    task: |
+      Definir l'architecture des composants:
+      - Hierarchie Atoms/Molecules/Organisms
+      - Props interfaces
+      - State management strategy
+      - Data fetching approach
+    output: "architecture.md avec component tree"
+    validation: "Architecture scalable et maintenable"
+    rollback: "Reviser architecture"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "Component Implementation"
+    agent: frontend-react
+    skills:
+      - apex
+      - mui
+      - git:commit
+    task: |
+      Implementer les composants:
+      - Components TypeScript
+      - Styling (CSS Modules/Tailwind/styled)
+      - Unit tests
+      - Storybook stories si utilise
+    output: "Composants implementes avec tests"
+    validation: "Tests passent, no TS errors"
+    rollback: "git revert component changes"
+    depends_on:
+      - "Component Architecture"
+
+  - name: "Accessibility Audit"
+    agent: accessibility-specialist
+    skills:
+      - web-design-guidelines
+    task: |
+      Verifier l'accessibilite WCAG 2.1:
+      - Keyboard navigation
+      - Screen reader compatibility
+      - Color contrast
+      - Focus management
+      - ARIA labels
+    output: "accessibility-report.md"
+    validation: "WCAG 2.1 AA compliance"
+    rollback: "Liste des fixes accessibilite"
+    depends_on:
+      - "Component Implementation"
+
+  - name: "Performance Optimization"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+      - vercel-react-best-practices
+    task: |
+      Optimiser les performances:
+      - Bundle size analysis
+      - Code splitting
+      - Lazy loading
+      - Core Web Vitals
+      - Caching strategy
+    output: "performance-report.md avec metriques"
+    validation: "LCP < 2.5s, FID < 100ms, CLS < 0.1"
+    rollback: "Documenter issues perf"
+    depends_on:
+      - "Accessibility Audit"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+      - utils-fix-errors
+    task: |
+      Tests finaux:
+      - E2E tests (Cypress/Playwright)
+      - Visual regression tests
+      - Cross-browser testing
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs a corriger"
+    depends_on:
+      - "Performance Optimization"

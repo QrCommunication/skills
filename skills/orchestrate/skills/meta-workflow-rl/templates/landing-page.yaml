@@ -1,0 +1,101 @@
+name: landing-page
+description: "Pipeline de creation de landing page optimisee conversion"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - ui-ux-pro-max
+
+steps:
+  - name: "Market Research"
+    agent: market-researcher
+    skills:
+      - brainstorm
+      - marketing-ideas
+    task: |
+      Recherche marche:
+      - Target audience analysis
+      - Competitor landing pages
+      - Value proposition refinement
+      - Key messages
+    output: "market-research.md"
+    validation: "Research complete"
+    rollback: "Approfondir recherche"
+
+  - name: "Copywriting"
+    agent: market-researcher
+    skills:
+      - copywriting
+      - marketing-psychology
+      - humanizer
+    task: |
+      Rediger le contenu:
+      - Headline principal
+      - Subheadlines
+      - Benefits list
+      - Social proof
+      - CTA copy
+      - FAQ
+    output: "landing-copy.md"
+    validation: "Copy compelling"
+    rollback: "Iterer copy"
+    depends_on:
+      - "Market Research"
+
+  - name: "UI Design"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+      - page-cro
+    task: |
+      Designer la landing page:
+      - Hero section
+      - Feature sections
+      - Social proof section
+      - CTA sections
+      - Mobile design
+    output: "landing-design.md"
+    validation: "Design conversion-focused"
+    rollback: "Iterer design"
+    depends_on:
+      - "Copywriting"
+
+  - name: "Implementation"
+    agent: frontend-react
+    skills:
+      - apex
+      - vercel-react-best-practices
+      - git:commit
+    task: |
+      Implementer la landing:
+      - React components
+      - Animations
+      - Form integration
+      - Analytics tracking
+      - A/B test setup
+    output: "Landing page implementee"
+    validation: "Page fonctionnelle"
+    rollback: "git revert"
+    depends_on:
+      - "UI Design"
+
+  - name: "SEO Optimization"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - schema-markup
+    task: |
+      Optimiser SEO:
+      - Meta tags
+      - Structured data
+      - Open Graph
+      - Performance optimization
+    output: "SEO optimise"
+    validation: "Lighthouse SEO > 90"
+    rollback: "Fix SEO"
+    depends_on:
+      - "Implementation"

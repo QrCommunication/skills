@@ -1,0 +1,75 @@
+name: webserver-nginx
+description: "Pipeline de configuration Nginx avec SSL"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture:
+      - Server blocks
+      - Upstream configuration
+      - Load balancing strategy
+      - SSL/TLS requirements
+    output: "nginx-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Network Configuration"
+    agent: network-engineer
+    skills:
+      - brainstorm
+    task: |
+      Configurer le reseau:
+      - DNS configuration
+      - Firewall rules
+      - Ports mapping
+      - Reverse proxy rules
+    output: "network-config.md"
+    validation: "Network config OK"
+    rollback: "Fix network"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Nginx Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Configurer Nginx:
+      - Server blocks configuration
+      - SSL certificates (Let's Encrypt/custom)
+      - Gzip compression
+      - Caching headers
+      - Security headers
+    output: "Configuration Nginx"
+    validation: "Nginx fonctionne"
+    rollback: "Restore previous config"
+    depends_on:
+      - "Network Configuration"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser Nginx:
+      - SSL configuration (A+ rating)
+      - Security headers (CSP, HSTS, etc.)
+      - Rate limiting
+      - DDoS protection basics
+    output: "nginx-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "Nginx Setup"

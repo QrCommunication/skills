@@ -1,0 +1,79 @@
+name: react-bestpractices
+description: "Pipeline d'audit React best practices"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-best-practices
+
+steps:
+  - name: "Code Review"
+    agent: code-reviewer
+    skills:
+      - review-code
+      - vercel-composition-patterns
+    task: |
+      Review du code React:
+      - Component patterns
+      - Hooks usage
+      - State management
+      - Props drilling
+      - Re-render optimization
+    output: "react-review.md"
+    validation: "Review complete"
+    rollback: "N/A - audit"
+
+  - name: "Performance Audit"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+      - vercel-react-best-practices
+    task: |
+      Audit performance React:
+      - Bundle size analysis
+      - Render performance
+      - Memory leaks
+      - Lazy loading usage
+      - Memoization effectiveness
+    output: "react-performance.md"
+    validation: "Audit complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Code Review"
+
+  - name: "Accessibility Audit"
+    agent: accessibility-specialist
+    skills:
+      - web-design-guidelines
+    task: |
+      Audit accessibilite:
+      - Semantic HTML
+      - ARIA usage
+      - Keyboard navigation
+      - Focus management
+      - Screen reader compatibility
+    output: "react-a11y.md"
+    validation: "Audit complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Performance Audit"
+
+  - name: "Recommendations"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Compiler recommendations:
+      - Priority ranking
+      - Quick wins
+      - Long-term improvements
+      - Refactoring roadmap
+    output: "react-recommendations.md"
+    validation: "Recommendations actionables"
+    rollback: "Reviser recommendations"
+    depends_on:
+      - "Accessibility Audit"

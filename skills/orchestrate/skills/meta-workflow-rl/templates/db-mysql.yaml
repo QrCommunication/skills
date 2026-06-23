@@ -1,0 +1,77 @@
+name: db-mysql
+description: "Pipeline de setup et migration MySQL/MariaDB"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Schema Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir le schema MySQL:
+      - Entity-Relationship diagram
+      - Tables et colonnes
+      - Storage engines (InnoDB)
+      - Indexes
+      - Foreign keys
+    output: "mysql-schema-design.md"
+    validation: "Schema normalise"
+    rollback: "Reviser schema"
+
+  - name: "Migration Creation"
+    agent: database-admin
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Creer les migrations:
+      - Migration files
+      - Indexes creation
+      - Foreign keys
+      - Character set/collation
+      - Seeders
+    output: "Migrations MySQL"
+    validation: "Migrations idempotentes"
+    rollback: "Fix migrations"
+    depends_on:
+      - "Schema Design"
+
+  - name: "Performance Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Configuration performance:
+      - Buffer pool sizing
+      - Query cache
+      - Connection pooling
+      - Slow query log
+      - Replication si necessaire
+    output: "Configuration production"
+    validation: "Performance OK"
+    rollback: "Ajuster config"
+    depends_on:
+      - "Migration Creation"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser MySQL:
+      - User permissions
+      - SSL connections
+      - Audit logging
+      - Backup encryption
+    output: "mysql-security.md"
+    validation: "Security OK"
+    rollback: "Document gaps"
+    depends_on:
+      - "Performance Setup"

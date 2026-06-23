@@ -1,0 +1,77 @@
+name: fix-loop
+description: "Pipeline de correction automatique CI/CD"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - ci-fixer
+
+steps:
+  - name: "Error Detection"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - explore
+    task: |
+      Detecter les erreurs:
+      - CI pipeline status
+      - Error logs analysis
+      - Test failures
+      - Lint errors
+    output: "errors-detected.md"
+    validation: "Erreurs identifiees"
+    rollback: "Manual investigation"
+
+  - name: "Root Cause Analysis"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - brainstorm
+    task: |
+      Analyser les causes:
+      - Error categorization
+      - Root cause identification
+      - Impact assessment
+      - Fix priority
+    output: "root-cause.md"
+    validation: "Causes identifiees"
+    rollback: "Approfondir analyse"
+    depends_on:
+      - "Error Detection"
+
+  - name: "Automated Fix"
+    agent: code-simplifier
+    skills:
+      - clean-code
+      - utils-fix-errors
+      - git:commit
+    task: |
+      Appliquer les fixes:
+      - Lint fixes (auto)
+      - Type fixes
+      - Test fixes
+      - Configuration fixes
+    output: "Fixes appliques"
+    validation: "CI repasse"
+    rollback: "git revert"
+    depends_on:
+      - "Root Cause Analysis"
+
+  - name: "Verification"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Verifier les corrections:
+      - CI pipeline rerun
+      - All tests pass
+      - No new errors
+      - Code review
+    output: "verification-report.md"
+    validation: "CI green"
+    rollback: "Retry fix loop"
+    depends_on:
+      - "Automated Fix"

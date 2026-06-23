@@ -1,0 +1,92 @@
+name: infrastructure
+description: "Pipeline de setup infrastructure generale"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Infrastructure Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'infrastructure:
+      - Architecture diagram
+      - Services necessaires
+      - Networking plan
+      - Scaling strategy
+      - Cost estimation
+    output: "infra-design.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Database Setup"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+      - apex
+    task: |
+      Configurer la base de donnees:
+      - Instance setup
+      - User permissions
+      - Backup configuration
+      - Connection pooling
+    output: "Database operationnelle"
+    validation: "DB accessible et securisee"
+    rollback: "Cleanup resources"
+    depends_on:
+      - "Infrastructure Design"
+
+  - name: "Backend Services"
+    agent: supabase-backend
+    skills:
+      - apex
+    task: |
+      Configurer les services backend:
+      - Auth configuration
+      - Storage buckets
+      - Edge functions
+      - RLS policies
+    output: "Backend services configures"
+    validation: "Services operationnels"
+    rollback: "Cleanup services"
+    depends_on:
+      - "Database Setup"
+
+  - name: "DevOps Configuration"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Configurer DevOps:
+      - CI/CD pipelines
+      - Environment variables
+      - Deployment scripts
+      - Monitoring setup
+    output: "DevOps configure"
+    validation: "Pipeline fonctionnel"
+    rollback: "Fix pipeline"
+    depends_on:
+      - "Backend Services"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser l'infrastructure:
+      - Firewall rules
+      - SSL/TLS configuration
+      - Secrets management
+      - Access controls
+    output: "security-config.md"
+    validation: "Security checklist OK"
+    rollback: "Document gaps"
+    depends_on:
+      - "DevOps Configuration"

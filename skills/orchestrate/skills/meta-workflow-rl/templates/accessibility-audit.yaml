@@ -1,0 +1,76 @@
+name: accessibility-audit
+description: "Pipeline d'audit accessibilite WCAG 2.1"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Automated Audit"
+    agent: accessibility-specialist
+    skills:
+      - web-design-guidelines
+      - explore
+    task: |
+      Audit automatise:
+      - axe-core analysis
+      - Lighthouse accessibility
+      - WAVE tool analysis
+      - Color contrast check
+    output: "automated-a11y.md"
+    validation: "Audit execute"
+    rollback: "N/A - audit"
+
+  - name: "Manual Testing"
+    agent: accessibility-specialist
+    skills:
+      - web-design-guidelines
+    task: |
+      Tests manuels:
+      - Keyboard navigation
+      - Screen reader testing
+      - Focus management
+      - Form accessibility
+      - Media alternatives
+    output: "manual-a11y.md"
+    validation: "Tests manuels complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Automated Audit"
+
+  - name: "Design Review"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+    task: |
+      Review design:
+      - Color contrast
+      - Text sizing
+      - Touch targets
+      - Visual hierarchy
+      - Motion/animation
+    output: "design-a11y.md"
+    validation: "Review complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Manual Testing"
+
+  - name: "Remediation Plan"
+    agent: frontend-react
+    skills:
+      - apex
+    task: |
+      Plan de remediation:
+      - WCAG violations by priority
+      - Implementation effort
+      - Code changes needed
+      - Testing approach
+    output: "a11y-remediation.md"
+    validation: "Plan actionable"
+    rollback: "Reviser plan"
+    depends_on:
+      - "Design Review"

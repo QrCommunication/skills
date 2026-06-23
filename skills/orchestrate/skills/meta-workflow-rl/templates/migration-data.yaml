@@ -1,0 +1,76 @@
+name: migration-data
+description: "Pipeline de migration de donnees"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Migration Planning"
+    agent: migration-specialist
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Planifier la migration:
+      - Source data analysis
+      - Target schema mapping
+      - Data transformation rules
+      - Zero-downtime strategy
+      - Rollback plan
+    output: "migration-plan.md"
+    validation: "Plan complete"
+    rollback: "Reviser plan"
+
+  - name: "Schema Preparation"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+      - git:commit
+    task: |
+      Preparer le schema:
+      - Target schema creation
+      - Temporary tables
+      - Indexes for migration
+      - Triggers if needed
+    output: "Schema prepare"
+    validation: "Schema ready"
+    rollback: "Cleanup schema"
+    depends_on:
+      - "Migration Planning"
+
+  - name: "ETL Implementation"
+    agent: migration-specialist
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Implementer ETL:
+      - Extract scripts
+      - Transform logic
+      - Load procedures
+      - Validation queries
+    output: "ETL scripts"
+    validation: "ETL fonctionne"
+    rollback: "git revert"
+    depends_on:
+      - "Schema Preparation"
+
+  - name: "Validation Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Valider la migration:
+      - Row count verification
+      - Data integrity checks
+      - Business rule validation
+      - Performance verification
+    output: "validation-report.md"
+    validation: "Data valide"
+    rollback: "Liste discrepancies"
+    depends_on:
+      - "ETL Implementation"

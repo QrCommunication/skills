@@ -1,0 +1,78 @@
+name: laravel-blade
+description: "Pipeline de developpement Laravel monolithique avec Blade"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - laravel-api
+
+steps:
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+    task: |
+      Concevoir l'interface:
+      - Wireframes des vues
+      - Design system (Tailwind classes)
+      - Component hierarchy
+      - Form designs
+    output: "design-spec.md"
+    validation: "Design complet"
+    rollback: "Iterer design"
+
+  - name: "Backend + Views Implementation"
+    agent: backend-laravel
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Implementer backend et vues:
+      - Controllers avec methodes
+      - Blade views
+      - Blade components
+      - Form validation
+      - Flash messages
+      - Middleware
+    output: "Code Laravel complet"
+    validation: "Tests passent"
+    rollback: "git revert"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "SEO Optimization"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - schema-markup
+    task: |
+      Optimiser pour le SEO:
+      - Meta tags via Blade
+      - Sitemap generation
+      - robots.txt
+      - Structured data
+    output: "SEO implementation"
+    validation: "SEO checklist complete"
+    rollback: "Fix SEO issues"
+    depends_on:
+      - "Backend + Views Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests complets:
+      - Feature tests PHPUnit
+      - Browser tests (Dusk)
+      - Form validation tests
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "SEO Optimization"

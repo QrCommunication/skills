@@ -1,0 +1,75 @@
+name: docker-compose
+description: "Pipeline de setup Docker Compose local"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture Docker:
+      - Services necessaires
+      - Networks
+      - Volumes
+      - Environment variables
+    output: "docker-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Docker Compose Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Creer docker-compose.yml:
+      - Services definitions
+      - Network configuration
+      - Volume mounts
+      - Environment files
+      - Health checks
+    output: "docker-compose.yml"
+    validation: "docker-compose up fonctionne"
+    rollback: "Fix compose file"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Security Configuration"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser Docker:
+      - No secrets in compose file
+      - Least privilege containers
+      - Network isolation
+      - Read-only filesystems where possible
+    output: "docker-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "Docker Compose Setup"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tester l'environnement:
+      - Services start correctly
+      - Network communication
+      - Volume persistence
+      - Environment variables
+    output: "docker-test-report.md"
+    validation: "Tous services OK"
+    rollback: "Liste issues"
+    depends_on:
+      - "Security Configuration"

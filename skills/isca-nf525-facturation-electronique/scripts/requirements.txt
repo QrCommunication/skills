@@ -1,0 +1,20 @@
+# Dépendances du script scripts/validate_facturx.py
+# (verify_chain.py n'a AUCUNE dépendance — stdlib uniquement.)
+#
+# Installation recommandée dans un venv (PEP 668 / systèmes "externally managed") :
+#   python3 -m venv .venv
+#   .venv/bin/pip install -r scripts/requirements.txt
+# Le script détecte automatiquement un ./.venv à la racine du skill et s'y ré-exécute.
+
+# Bibliothèque de référence Factur-X / ZUGFeRD / Order-X (Akretion / A. de Lattre).
+# Fournit extraction du XML embarqué, détection flavor+profil, validation XSD et
+# validation Schematron EN16931 (via Saxon). Tire lxml, pypdf et saxonche.
+factur-x>=4.2
+
+# Tirées automatiquement par factur-x — listées pour traçabilité :
+lxml>=5
+pypdf>=5.3
+saxonche>=12
+
+# Uniquement nécessaire pour (re)générer des PDF de test/fixtures :
+reportlab>=4

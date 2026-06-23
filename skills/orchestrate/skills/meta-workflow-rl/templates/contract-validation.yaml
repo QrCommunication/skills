@@ -1,0 +1,87 @@
+name: contract-validation
+description: "Pipeline de validation contrats API front/back"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Contract Extraction"
+    agent: tech-lead
+    skills:
+      - explore
+    task: |
+      Extraire les contrats:
+      - API endpoints actuels
+      - Request/Response schemas
+      - TypeScript types frontend
+      - PHP DTOs backend
+    output: "contracts-current.md"
+    validation: "Contracts extraits"
+    rollback: "Manual extraction"
+
+  - name: "Backend Validation"
+    agent: backend-laravel
+    skills:
+      - apex
+    task: |
+      Valider backend:
+      - API responses match contracts
+      - Validation rules aligned
+      - Error formats consistent
+      - HTTP codes correct
+    output: "backend-validation.md"
+    validation: "Backend conforme"
+    rollback: "Liste discrepancies"
+    depends_on:
+      - "Contract Extraction"
+
+  - name: "Contract Sync Check"
+    agent: validator
+    skills:
+      - review-code
+    task: |
+      Verifier synchronisation:
+      - Compare TS types vs PHP DTOs
+      - Check nullability alignment
+      - Verify enum values
+      - Check optional fields
+    output: "sync-validation.md"
+    validation: "100% sync"
+    rollback: "Liste des ecarts"
+    depends_on:
+      - "Backend Validation"
+
+  - name: "Frontend Validation"
+    agent: frontend-react
+    skills:
+      - apex
+    task: |
+      Valider frontend:
+      - Types match API responses
+      - Error handling aligned
+      - Loading states for all calls
+    output: "frontend-validation.md"
+    validation: "Frontend conforme"
+    rollback: "Liste discrepancies"
+    depends_on:
+      - "Contract Sync Check"
+
+  - name: "QA Integration Tests"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests d'integration:
+      - API calls E2E
+      - Type safety verification
+      - Error scenario tests
+    output: "integration-test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "Frontend Validation"

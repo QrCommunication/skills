@@ -1,0 +1,110 @@
+name: seo-programmatic
+description: "Pipeline de SEO programmatique pour milliers de pages"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - seo-audit
+
+steps:
+  - name: "SEO Audit"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - explore
+    task: |
+      Audit SEO initial:
+      - Current site analysis
+      - Competitor programmatic pages
+      - Keyword universe mapping
+      - Opportunity sizing
+    output: "programmatic-seo-audit.md"
+    validation: "Audit complet"
+    rollback: "Approfondir audit"
+
+  - name: "Content Strategy"
+    agent: product-manager
+    skills:
+      - content-strategy
+      - brainstorm
+    task: |
+      Strategie programmatique:
+      - Page templates definition
+      - Data sources identification
+      - Content structure
+      - URL structure
+    output: "programmatic-strategy.md"
+    validation: "Strategie scalable"
+    rollback: "Reviser strategie"
+    depends_on:
+      - "SEO Audit"
+
+  - name: "Schema & Markup"
+    agent: seo-specialist
+    skills:
+      - schema-markup
+    task: |
+      Structured data:
+      - JSON-LD templates
+      - Dynamic schema generation
+      - Breadcrumb schema
+      - FAQ schema if applicable
+    output: "schema-templates.md"
+    validation: "Schemas valides"
+    rollback: "Fix schemas"
+    depends_on:
+      - "Content Strategy"
+
+  - name: "Template Design"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+    task: |
+      Designer les templates:
+      - Page layout templates
+      - Component variations
+      - Mobile responsive
+      - Performance optimization
+    output: "page-templates.md"
+    validation: "Templates complete"
+    rollback: "Reviser templates"
+    depends_on:
+      - "Schema & Markup"
+
+  - name: "Implementation"
+    agent: frontend-react
+    skills:
+      - apex
+      - vercel-react-best-practices
+      - git:commit
+    task: |
+      Implementer le systeme:
+      - Template components
+      - Data fetching
+      - Static generation setup
+      - Sitemap generation
+    output: "Implementation programmatique"
+    validation: "Pages generees correctement"
+    rollback: "git revert"
+    depends_on:
+      - "Template Design"
+
+  - name: "Programmatic SEO"
+    agent: seo-specialist
+    skills:
+      - programmatic-seo
+    task: |
+      Finaliser le SEO:
+      - URL canonicalization
+      - Internal linking automation
+      - Index management
+      - Search Console setup
+    output: "programmatic-seo-complete.md"
+    validation: "SEO optimise"
+    rollback: "Fix SEO issues"
+    depends_on:
+      - "Implementation"

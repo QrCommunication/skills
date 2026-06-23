@@ -1,0 +1,73 @@
+name: performance-audit
+description: "Pipeline d'audit performance complet"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Performance Profiling"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+      - explore
+    task: |
+      Profiler l'application:
+      - Frontend performance (Lighthouse)
+      - Backend response times
+      - Database query analysis
+      - API latency
+    output: "performance-profile.md"
+    validation: "Profiling complete"
+    rollback: "N/A - audit"
+
+  - name: "Database Optimization"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+    task: |
+      Analyser la base:
+      - Slow queries
+      - Missing indexes
+      - N+1 problems
+      - Connection pooling
+    output: "db-performance.md"
+    validation: "Analysis complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Performance Profiling"
+
+  - name: "Infrastructure Review"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Review infrastructure:
+      - Server sizing
+      - Caching layers
+      - CDN configuration
+      - Load balancing
+    output: "infra-performance.md"
+    validation: "Review complete"
+    rollback: "N/A - audit"
+    depends_on:
+      - "Database Optimization"
+
+  - name: "Recommendations"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Compiler recommendations:
+      - Quick wins
+      - Medium-term improvements
+      - Infrastructure changes
+      - Expected impact
+    output: "performance-recommendations.md"
+    validation: "Recommendations actionables"
+    rollback: "Reviser"
+    depends_on:
+      - "Infrastructure Review"

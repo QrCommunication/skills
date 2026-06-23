@@ -1,0 +1,95 @@
+name: mobile-crossplatform
+description: "Pipeline de developpement application iOS + Android"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-native-skills
+
+steps:
+  - name: "Product Requirements"
+    agent: product-manager
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Definir requirements cross-platform:
+      - Feature parity iOS/Android
+      - Platform-specific features
+      - Shared codebase strategy
+      - Release timeline both platforms
+    output: "crossplatform-requirements.md"
+    validation: "Requirements complets"
+    rollback: "Clarifier requirements"
+
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - building-native-ui
+      - design-system-starter
+    task: |
+      Design cross-platform:
+      - Shared design system
+      - Platform-specific adaptations
+      - HIG + Material considerations
+      - Responsive design
+    output: "crossplatform-design-spec.md"
+    validation: "Design adapte aux deux plateformes"
+    rollback: "Reviser design"
+    depends_on:
+      - "Product Requirements"
+
+  - name: "Core Implementation"
+    agent: react-native-dev
+    skills:
+      - apex
+      - building-native-ui
+      - expo-dev-client
+      - git:commit
+    task: |
+      Implementer le core:
+      - Shared components
+      - Platform-specific components
+      - Navigation
+      - API layer
+    output: "Core app fonctionnel"
+    validation: "Builds iOS et Android OK"
+    rollback: "git revert"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "Platform Polish"
+    agent: react-native-ui
+    skills:
+      - building-native-ui
+    task: |
+      Polish par plateforme:
+      - iOS-specific UI tweaks
+      - Android-specific UI tweaks
+      - Platform animations
+      - Gestures natives
+    output: "UI native sur les deux plateformes"
+    validation: "Feel natif sur iOS et Android"
+    rollback: "Simplifier"
+    depends_on:
+      - "Core Implementation"
+
+  - name: "QA Testing Both Platforms"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests cross-platform:
+      - iOS simulator + devices
+      - Android emulator + devices
+      - Feature parity verification
+      - Performance comparison
+    output: "crossplatform-test-report.md"
+    validation: "Tests passent sur les deux"
+    rollback: "Liste bugs par plateforme"
+    depends_on:
+      - "Platform Polish"

@@ -1,0 +1,81 @@
+name: auto-doc-update
+description: "Met a jour la documentation et la dette technique en background non bloquant a chaque changement ou modification du code"
+category: dev
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  # STEP 1 - Sequentiel: Detecter et explorer les changements
+  - name: "Detect & Explore Changements"
+    agent: explore-codebase
+    skills: [explore]
+    task: |
+      Analyser les fichiers recemment modifies dans le projet.
+      Identifier :
+      - Les fichiers ajoutes, modifies ou supprimes
+      - Les fonctions/classes/methodes impactees
+      - Les dependances affectees par les changements
+      - Les zones du codebase qui necessitent une mise a jour documentaire
+      Produire un rapport structure des changements avec leur impact.
+    output: "changements-detectes.md"
+    validation: "Rapport de changements complet avec liste des fichiers et impacts"
+    rollback: "N/A - exploration only"
+
+  # STEP 2A - Parallele: Mise a jour documentation
+  - name: "Update Documentation"
+    agent: technical-writer
+    parallel_group: "update"
+    skills: [codebase-documenter, documentation-templates, mermaid-diagrams, generate-image]
+    task: |
+      A partir du rapport de changements (etape precedente), mettre a jour
+      la documentation du projet :
+      - Creer/modifier les fichiers de documentation affectes
+      - Generer des diagrammes Mermaid pour les flux complexes
+      - Utiliser les templates de documentation pour la coherence
+      - Generer des images/schemas si necessaire pour la clarte
+      - Mettre a jour les README, guides API, et docs techniques
+      Respecter les conventions de documentation existantes du projet.
+    output: "documentation-updated.md"
+    validation: "Documentation a jour, diagrammes generes, pas de sections obsoletes"
+    rollback: "git checkout -- docs/"
+
+  # STEP 2B - Parallele: Analyse dette technique
+  - name: "Analyze Tech Debt"
+    agent: tech-lead
+    parallel_group: "update"
+    skills: [tech-debt-analyzer, mermaid-diagrams, documentation-templates]
+    task: |
+      A partir du rapport de changements (etape precedente), analyser
+      la dette technique introduite ou resolue :
+      - Identifier la nouvelle dette technique (code smells, complexite, couplage)
+      - Detecter la dette resolue par les changements recents
+      - Evaluer la severite et le cout de remediation
+      - Generer des diagrammes de dependances et d'architecture
+      - Produire un rapport avec recommandations priorisees
+      Mettre a jour le registre de dette technique du projet.
+    output: "tech-debt-report.md"
+    validation: "Rapport de dette technique avec scores, tendances et recommandations"
+    rollback: "N/A - analysis only"
+
+  # STEP 3 - Sequentiel: Review et validation finale
+  - name: "Review & Validate"
+    agent: code-reviewer
+    depends_on: ["update"]
+    skills: [review-code]
+    task: |
+      Reviewer les changements de documentation et le rapport de dette technique
+      produits par les etapes precedentes :
+      - Verifier la coherence de la documentation avec le code actuel
+      - Valider l'exactitude des diagrammes generes
+      - S'assurer que le rapport de dette technique est actionnable
+      - Verifier qu'aucune information sensible n'est exposee dans la doc
+      - Produire un rapport de validation avec corrections eventuelles
+    output: "review-validation.md"
+    validation: "Documentation et dette technique validees, pas d'incoherences detectees"
+    rollback: "Remonter les erreurs pour correction manuelle"

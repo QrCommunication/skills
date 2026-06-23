@@ -1,0 +1,76 @@
+name: social-campaign
+description: "Pipeline de creation de campagne social media"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Campaign Strategy"
+    agent: market-researcher
+    skills:
+      - marketing-ideas
+      - brainstorm
+    task: |
+      Definir la strategie:
+      - Campaign objective
+      - Platform selection
+      - Content pillars
+      - Posting schedule
+      - Success metrics
+    output: "social-strategy.md"
+    validation: "Strategie definie"
+    rollback: "Reviser strategie"
+
+  - name: "Content Planning"
+    agent: market-researcher
+    skills:
+      - social-content
+      - content-strategy
+    task: |
+      Planifier le contenu:
+      - Content calendar
+      - Post types per platform
+      - Hashtag strategy
+      - Engagement tactics
+    output: "content-calendar.md"
+    validation: "Planning complete"
+    rollback: "Reviser planning"
+    depends_on:
+      - "Campaign Strategy"
+
+  - name: "Content Creation"
+    agent: market-researcher
+    skills:
+      - copywriting
+      - humanizer
+    task: |
+      Creer le contenu:
+      - Post copy per platform
+      - Captions
+      - Hashtags
+      - Call-to-actions
+    output: "social-content/"
+    validation: "Contenu ready"
+    rollback: "Reviser contenu"
+    depends_on:
+      - "Content Planning"
+
+  - name: "Analytics Setup"
+    agent: market-researcher
+    skills:
+      - analytics-tracking
+    task: |
+      Configurer analytics:
+      - UTM parameters
+      - Conversion tracking
+      - Dashboard creation
+      - Reporting schedule
+    output: "Analytics configure"
+    validation: "Tracking ready"
+    rollback: "Fix tracking"
+    depends_on:
+      - "Content Creation"

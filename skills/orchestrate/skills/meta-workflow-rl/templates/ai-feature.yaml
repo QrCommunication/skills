@@ -1,0 +1,117 @@
+name: ai-feature
+description: "Pipeline d'integration de fonctionnalite IA/LLM"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Requirements Analysis"
+    agent: business-analyst
+    skills:
+      - brainstorm
+      - humanizer
+    task: |
+      Analyser les besoins IA:
+      - Use case definition
+      - Input/output specification
+      - Quality requirements (accuracy, latency)
+      - Cost constraints
+      - Fallback strategy
+    output: "ai-requirements.md"
+    validation: "Requirements clairs"
+    rollback: "Clarifier avec stakeholders"
+
+  - name: "Technical Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'integration IA:
+      - Model selection (GPT-4, Claude, etc.)
+      - Prompt engineering strategy
+      - API integration pattern
+      - Caching strategy
+      - Rate limiting
+      - Error handling
+    output: "ai-design.md"
+    validation: "Design reviewable"
+    rollback: "Reviser design"
+    depends_on:
+      - "Requirements Analysis"
+
+  - name: "Backend Implementation"
+    agent: backend-laravel
+    skills:
+      - apex
+      - openrouter-sdk
+      - git:commit
+    task: |
+      Implementer l'integration backend:
+      - API client setup
+      - Prompt templates
+      - Response parsing
+      - Caching layer
+      - Queue jobs for async
+      - Tests unitaires
+    output: "Code backend IA"
+    validation: "Tests passent, API fonctionne"
+    rollback: "git revert"
+    depends_on:
+      - "Technical Design"
+
+  - name: "Integration Testing"
+    agent: integration-specialist
+    skills:
+      - native-data-fetching
+      - apex
+    task: |
+      Tester l'integration:
+      - API endpoint tests
+      - Prompt quality tests
+      - Latency tests
+      - Cost monitoring
+      - Fallback tests
+    output: "integration-report.md"
+    validation: "Integration stable"
+    rollback: "Fix integration issues"
+    depends_on:
+      - "Backend Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests complets:
+      - E2E tests
+      - Load testing
+      - Edge cases
+      - Error scenarios
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "Integration Testing"
+
+  - name: "Security Review"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Review securite IA:
+      - Prompt injection prevention
+      - Data privacy (no PII in prompts)
+      - API key security
+      - Rate limiting
+      - Logging (no sensitive data)
+    output: "ai-security-review.md"
+    validation: "Security OK"
+    rollback: "Fix security issues"
+    depends_on:
+      - "QA Testing"

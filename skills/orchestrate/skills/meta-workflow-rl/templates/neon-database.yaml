@@ -1,0 +1,91 @@
+name: neon-database
+description: "Pipeline de setup Neon PostgreSQL serverless"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - postgres-best-practices
+
+steps:
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture Neon:
+      - Branch strategy
+      - Compute sizing
+      - Connection pooling needs
+      - Scaling strategy
+    output: "neon-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Database Setup"
+    agent: neon-expert
+    skills:
+      - apex
+    task: |
+      Configurer Neon:
+      - Project creation
+      - Branch setup (main, dev, preview)
+      - Connection pooling (Neon Pooler)
+      - Auto-scaling configuration
+    output: "Neon project configure"
+    validation: "Neon accessible"
+    rollback: "Cleanup resources"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Schema Implementation"
+    agent: neon-database-architect
+    skills:
+      - supabase-postgres-best-practices
+      - git:commit
+    task: |
+      Implementer le schema:
+      - Tables creation
+      - Indexes
+      - Constraints
+      - Extensions (pgvector, etc.)
+    output: "Schema PostgreSQL"
+    validation: "Schema fonctionnel"
+    rollback: "Rollback schema"
+    depends_on:
+      - "Database Setup"
+
+  - name: "DevOps Integration"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Integrer avec DevOps:
+      - CI/CD branch previews
+      - Environment variables
+      - Connection string management
+      - Backup verification
+    output: "Integration DevOps"
+    validation: "CI/CD fonctionne"
+    rollback: "Fix integration"
+    depends_on:
+      - "Schema Implementation"
+
+  - name: "Security Setup"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser Neon:
+      - IP restrictions
+      - Role permissions
+      - SSL enforcement
+      - Audit logging
+    output: "neon-security.md"
+    validation: "Security OK"
+    rollback: "Document gaps"
+    depends_on:
+      - "DevOps Integration"

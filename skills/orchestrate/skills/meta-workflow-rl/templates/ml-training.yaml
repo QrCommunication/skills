@@ -1,0 +1,90 @@
+name: ml-training
+description: "Pipeline de fine-tuning et entrainement ML"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Data Preparation"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - brainstorm
+    task: |
+      Preparer les donnees:
+      - Data collection strategy
+      - Data cleaning requirements
+      - Labeling approach
+      - Train/val/test split
+    output: "data-prep.md"
+    validation: "Data strategy definie"
+    rollback: "Reviser strategy"
+
+  - name: "Database Setup"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+    task: |
+      Configurer le stockage:
+      - Training data storage
+      - Feature store if needed
+      - Experiment tracking DB
+    output: "ML data storage"
+    validation: "Storage ready"
+    rollback: "Cleanup"
+    depends_on:
+      - "Data Preparation"
+
+  - name: "Training Pipeline"
+    agent: backend-laravel
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Implementer le training:
+      - Data loading
+      - Model configuration
+      - Training loop
+      - Checkpointing
+      - Metrics logging
+    output: "Training pipeline"
+    validation: "Pipeline execute"
+    rollback: "git revert"
+    depends_on:
+      - "Database Setup"
+
+  - name: "Infrastructure Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Configurer l'infra ML:
+      - GPU/TPU resources
+      - Training environment
+      - Experiment tracking (MLflow/W&B)
+      - Model registry
+    output: "ML infrastructure"
+    validation: "Infra ready"
+    rollback: "Cleanup resources"
+    depends_on:
+      - "Training Pipeline"
+
+  - name: "Evaluation"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Evaluer le modele:
+      - Metrics evaluation
+      - Benchmark comparison
+      - Bias testing
+      - Error analysis
+    output: "model-evaluation.md"
+    validation: "Model quality OK"
+    rollback: "Retrain avec adjustments"
+    depends_on:
+      - "Infrastructure Setup"

@@ -1,0 +1,100 @@
+name: seo-audit
+description: "Pipeline d'audit SEO complet avec recommendations"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Technical SEO Audit"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - explore
+    task: |
+      Audit technique SEO:
+      - Crawlability (robots.txt, sitemap)
+      - Indexability (noindex, canonicals)
+      - Site speed (Core Web Vitals)
+      - Mobile-friendliness
+      - HTTPS configuration
+      - URL structure
+      - Internal linking
+    output: "technical-seo-report.md"
+    validation: "Audit complet avec scores"
+    rollback: "N/A - audit only"
+
+  - name: "Content SEO Audit"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - content-strategy
+    task: |
+      Audit du contenu:
+      - Title tags et meta descriptions
+      - H1-H6 hierarchy
+      - Keyword density
+      - Content quality
+      - Duplicate content
+      - Thin content pages
+    output: "content-seo-report.md"
+    validation: "Audit contenu complet"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "Technical SEO Audit"
+
+  - name: "Performance Audit"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+      - vercel-react-best-practices
+    task: |
+      Audit performance:
+      - Lighthouse scores
+      - Core Web Vitals (LCP, FID, CLS)
+      - Time to First Byte
+      - Image optimization
+      - JavaScript/CSS optimization
+    output: "performance-report.md"
+    validation: "Metriques collectees"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "Content SEO Audit"
+
+  - name: "Accessibility Review"
+    agent: accessibility-specialist
+    skills:
+      - web-design-guidelines
+    task: |
+      Review accessibilite (impact SEO):
+      - Alt texts
+      - Heading structure
+      - Link text quality
+      - Form labels
+      - Color contrast
+    output: "accessibility-seo-report.md"
+    validation: "Review complete"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "Performance Audit"
+
+  - name: "Recommendations Report"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - humanizer
+    task: |
+      Compiler les recommendations:
+      - Priority ranking (Critical/High/Medium/Low)
+      - Implementation effort estimation
+      - Expected impact
+      - Quick wins vs long-term
+      - Action plan
+    output: "seo-recommendations.md"
+    validation: "Rapport actionnable"
+    rollback: "Reviser recommendations"
+    depends_on:
+      - "Accessibility Review"

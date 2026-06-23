@@ -1,0 +1,91 @@
+name: marketing-launch
+description: "Pipeline de lancement produit marketing"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Market Research"
+    agent: market-researcher
+    skills:
+      - brainstorm
+      - marketing-ideas
+    task: |
+      Recherche de marche:
+      - Target audience definition
+      - Competitor analysis
+      - Positioning strategy
+      - Key messages
+    output: "market-research.md"
+    validation: "Research complete"
+    rollback: "Approfondir"
+
+  - name: "Launch Strategy"
+    agent: product-manager
+    skills:
+      - launch-strategy
+      - brainstorm
+    task: |
+      Definir la strategie:
+      - Launch timeline
+      - Channels selection
+      - Content calendar
+      - Success metrics
+    output: "launch-strategy.md"
+    validation: "Strategie complete"
+    rollback: "Reviser strategie"
+    depends_on:
+      - "Market Research"
+
+  - name: "Content Creation"
+    agent: market-researcher
+    skills:
+      - copywriting
+      - humanizer
+    task: |
+      Creer le contenu:
+      - Press release
+      - Blog posts
+      - Social media content
+      - Email sequences
+    output: "launch-content/"
+    validation: "Contenu ready"
+    rollback: "Reviser contenu"
+    depends_on:
+      - "Launch Strategy"
+
+  - name: "SEO Optimization"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - schema-markup
+    task: |
+      Optimiser pour SEO:
+      - Landing page SEO
+      - Content optimization
+      - Technical SEO check
+    output: "seo-ready"
+    validation: "SEO optimise"
+    rollback: "Fix SEO"
+    depends_on:
+      - "Content Creation"
+
+  - name: "Social Setup"
+    agent: market-researcher
+    skills:
+      - social-content
+    task: |
+      Preparer social:
+      - Posts scheduled
+      - Graphics ready
+      - Hashtag strategy
+      - Influencer outreach
+    output: "social-ready"
+    validation: "Social setup"
+    rollback: "Reviser social"
+    depends_on:
+      - "SEO Optimization"

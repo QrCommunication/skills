@@ -1,0 +1,146 @@
+name: readme-refactor
+description: "Audit exhaustif de l'application, puis refonte, review et ameliore toute la documentation, readme compris"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - crafting-effective-readmes
+  - writing-clearly-and-concisely
+  - mermaid-diagrams
+  - brainstorm
+  - search
+  - clean-code
+  - review-code
+  - humanizer
+
+steps:
+  # WAVE 1 - DISCOVERY (Parallèle)
+  - name: "Audit Codebase"
+    agent: explore-codebase
+    parallel_group: "discovery"      # Exécution parallèle avec Analyse Docs
+    parallel_split: 5                # Divise le codebase en 5 parties
+    skills:
+      - explore
+      - ultrathink
+    task: |
+      Explorer exhaustivement l'application pour comprendre:
+      - Architecture globale (monorepo, services, packages)
+      - Technologies utilisees (frameworks, languages, tools)
+      - Structure des dossiers et conventions
+      - Points d'entree principaux
+      - Dependances externes
+      - Configurations (env, CI/CD, docker)
+    output: "audit-codebase.md avec cartographie complete"
+    validation: "Architecture documentee, technologies listees"
+    rollback: "N/A - audit only"
+
+  - name: "Analyse Documentation Existante"
+    agent: technical-writer
+    parallel_group: "discovery"      # Même groupe = parallèle avec Audit Codebase
+    skills:
+      - explore
+    task: |
+      Analyser l'etat actuel de la documentation:
+      - Inventaire des fichiers doc existants (README, CLAUDE.md, docs/)
+      - Evaluation de la qualite et completude
+      - Identification des sections obsoletes ou manquantes
+      - Coherence avec le code actuel
+      - Accessibilite et lisibilite
+    output: "analyse-docs.md avec inventaire et gaps identifies"
+    validation: "Inventaire complet, gaps documentes"
+    rollback: "N/A - analyse only"
+
+  # WAVE 2 - PLANNING (Séquentiel, attend discovery)
+  - name: "Plan de Refonte"
+    agent: tech-lead
+    depends_on: ["discovery"]        # Attend la fin du groupe parallèle
+    skills:
+      - gepetto
+      - ultrathink
+    task: |
+      Definir le plan de refonte documentaire:
+      - Structure cible de la documentation
+      - Priorites de redaction (README > CLAUDE.md > API docs)
+      - Template et format pour chaque type de doc
+      - Diagrammes necessaires (architecture, flux, DB)
+      - Guidelines de style et ton
+    output: "plan-refonte.md avec structure et priorites"
+    validation: "Plan actionnable avec ordre des taches"
+    rollback: "Reviser le plan"
+
+  - name: "Redaction README Principal"
+    agent: technical-writer
+    skills:
+      - crafting-effective-readmes
+    task: |
+      Rediger le README.md principal selon les best practices:
+      - Header avec badges et description concise
+      - Quick Start (installation en 3 commandes max)
+      - Features principales avec exemples
+      - Architecture overview avec diagramme Mermaid
+      - Configuration et variables d'environnement
+      - Commandes de developpement
+      - Structure du projet
+      - Contributing guidelines
+      - License
+    output: "README.md refait completement"
+    validation: "README suit le template, quick start fonctionne"
+    rollback: "git revert README.md"
+    depends_on:
+      - "Plan de Refonte"
+
+  - name: "Documentation Technique"
+    agent: technical-writer
+    skills:
+      - mermaid-diagrams
+    task: |
+      Rediger/mettre a jour la documentation technique:
+      - CLAUDE.md pour les AI assistants
+      - Architecture.md avec diagrammes
+      - API.md si applicable
+      - Database.md avec schema
+      - Deployment.md avec procedures
+      - Troubleshooting.md
+    output: "Fichiers de documentation technique mis a jour"
+    validation: "Docs coherentes avec le code, diagrammes inclus"
+    rollback: "git revert docs/"
+    depends_on:
+      - "Redaction README Principal"
+
+  - name: "Review Qualite"
+    agent: code-reviewer
+    skills:
+      - humanizer
+    task: |
+      Reviser la qualite de toute la documentation:
+      - Coherence du style et du ton
+      - Absence de jargon inutile
+      - Clarte des explications
+      - Exactitude technique
+      - Liens fonctionnels
+      - Orthographe et grammaire
+      - Formatage markdown correct
+    output: "review-report.md avec corrections suggerees"
+    validation: "Score qualite > 8/10"
+    rollback: "Appliquer corrections"
+    depends_on:
+      - "Documentation Technique"
+
+  - name: "Finalisation"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Validation finale de la documentation:
+      - Verifier que les commandes documentees fonctionnent
+      - Tester les liens internes et externes
+      - Valider les exemples de code
+      - S'assurer que le Quick Start marche de zero
+      - Generer table des matieres si necessaire
+    output: "Documentation validee et prete"
+    validation: "Tous les tests de doc passent"
+    rollback: "Corriger les erreurs detectees"
+    depends_on:
+      - "Review Qualite"

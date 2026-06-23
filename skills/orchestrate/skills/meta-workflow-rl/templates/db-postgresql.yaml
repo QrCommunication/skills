@@ -1,0 +1,100 @@
+name: db-postgresql
+description: "Pipeline de setup et migration PostgreSQL"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Schema Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+      - postgres-best-practices
+    task: |
+      Concevoir le schema de base de donnees:
+      - Entity-Relationship diagram
+      - Tables et colonnes
+      - Types de donnees
+      - Indexes planifies
+      - Constraints et relations
+      - Partitioning strategy si necessaire
+    output: "schema-design.md avec ERD"
+    validation: "Schema normalise et optimise"
+    rollback: "Reviser schema"
+
+  - name: "Migration Creation"
+    agent: database-admin
+    skills:
+      - apex
+      - supabase-postgres-best-practices
+      - git:commit
+    task: |
+      Creer les migrations:
+      - Migration files avec conditions (Schema::hasTable)
+      - Indexes
+      - Foreign keys
+      - Seeders si necessaire
+      - Rollback scripts
+    output: "Migrations Laravel ou raw SQL"
+    validation: "Migrations idempotentes"
+    rollback: "Fix migrations"
+    depends_on:
+      - "Schema Design"
+
+  - name: "Data Migration"
+    agent: migration-specialist
+    skills:
+      - apex
+      - brainstorm
+    task: |
+      Migrer les donnees existantes (si applicable):
+      - ETL scripts
+      - Data transformation
+      - Validation des donnees
+      - Zero-downtime strategy
+    output: "Scripts de migration de donnees"
+    validation: "Donnees migrees et validees"
+    rollback: "Restore from backup"
+    depends_on:
+      - "Migration Creation"
+
+  - name: "Performance Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Configurer pour la performance:
+      - Connection pooling (PgBouncer)
+      - Query optimization
+      - Monitoring setup
+      - Backup configuration
+      - Replication si necessaire
+    output: "Configuration production-ready"
+    validation: "Performance benchmarks OK"
+    rollback: "Ajuster configuration"
+    depends_on:
+      - "Data Migration"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+      - brainstorm
+    task: |
+      Securiser la base de donnees:
+      - User permissions (least privilege)
+      - Row Level Security si Supabase
+      - Audit logging
+      - Encryption at rest
+      - SSL connections
+    output: "security-config.md"
+    validation: "Security checklist complete"
+    rollback: "Documenter gaps securite"
+    depends_on:
+      - "Performance Setup"

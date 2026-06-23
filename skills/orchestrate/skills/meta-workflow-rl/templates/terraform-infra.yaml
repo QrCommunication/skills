@@ -1,0 +1,74 @@
+name: terraform-infra
+description: "Pipeline Infrastructure as Code avec Terraform"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Infrastructure Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'infrastructure:
+      - Cloud provider selection
+      - Resource architecture
+      - Module structure
+      - State management strategy
+    output: "terraform-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Terraform Setup"
+    agent: terraform-specialist
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Creer les configurations:
+      - Provider configuration
+      - Module structure
+      - Variables and outputs
+      - Backend configuration (state)
+    output: "terraform/ configuration"
+    validation: "terraform validate OK"
+    rollback: "Fix configuration"
+    depends_on:
+      - "Infrastructure Design"
+
+  - name: "Environment Separation"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Configurer les environnements:
+      - Workspaces ou directories
+      - Variable files per env
+      - Remote state per env
+      - CI/CD integration
+    output: "Environments configures"
+    validation: "terraform plan pour chaque env"
+    rollback: "Fix env config"
+    depends_on:
+      - "Terraform Setup"
+
+  - name: "Security Review"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Review securite IaC:
+      - No secrets in code
+      - Least privilege IAM
+      - Encryption at rest
+      - Network security groups
+    output: "terraform-security.md"
+    validation: "Security OK"
+    rollback: "Fix security issues"
+    depends_on:
+      - "Environment Separation"

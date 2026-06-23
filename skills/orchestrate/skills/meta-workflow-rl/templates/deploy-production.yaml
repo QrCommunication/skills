@@ -1,0 +1,94 @@
+name: deploy-production
+description: "Pipeline de deploiement en production avec validation complete"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Pre-deployment Checks"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - apex
+    task: |
+      Verifier la readiness pour deploy:
+      - Tous tests CI passent
+      - No security vulnerabilities (npm audit, composer audit)
+      - Environment variables configurees
+      - Database migrations ready
+      - Rollback plan defini
+      - Changelog prepare
+    output: "deployment-checklist.md"
+    validation: "Toutes verifications passent"
+    rollback: "STOP - fix issues first"
+
+  - name: "Staging Validation"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Valider sur staging:
+      - Deploy sur staging
+      - Smoke tests
+      - E2E critical paths
+      - Performance baseline
+      - Compare avec production actuelle
+    output: "staging-validation-report.md"
+    validation: "Staging OK, no regressions"
+    rollback: "Fix issues on staging"
+    depends_on:
+      - "Pre-deployment Checks"
+
+  - name: "Production Deploy"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Deployer en production:
+      - Blue-green ou rolling deploy
+      - Database migrations
+      - Cache invalidation
+      - CDN purge si necessaire
+      - Health checks
+    output: "Deployment effectue"
+    validation: "Health checks passent"
+    rollback: "Immediate rollback to previous version"
+    depends_on:
+      - "Staging Validation"
+
+  - name: "Post-deployment Validation"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Valider le deploy:
+      - Smoke tests production
+      - Monitor error rates
+      - Check key metrics
+      - Verify critical flows
+    output: "post-deploy-report.md"
+    validation: "Production stable"
+    rollback: "Trigger rollback if issues"
+    depends_on:
+      - "Production Deploy"
+
+  - name: "Security Verification"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Verification securite post-deploy:
+      - SSL/TLS configuration
+      - Headers security
+      - No exposed secrets
+      - Access logs review
+    output: "security-verification.md"
+    validation: "Security OK"
+    rollback: "Alert + immediate fix"
+    depends_on:
+      - "Post-deployment Validation"

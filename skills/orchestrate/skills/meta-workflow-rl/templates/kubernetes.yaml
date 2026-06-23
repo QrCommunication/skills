@@ -1,0 +1,93 @@
+name: kubernetes
+description: "Pipeline de deploiement Kubernetes production"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Concevoir l'architecture K8s:
+      - Namespace strategy
+      - Deployment strategy
+      - Service mesh needs
+      - Scaling requirements
+      - Resource limits
+    output: "k8s-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser architecture"
+
+  - name: "Manifest Creation"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Creer les manifests K8s:
+      - Deployments
+      - Services
+      - ConfigMaps/Secrets
+      - Ingress
+      - HPA (auto-scaling)
+    output: "k8s/ manifests"
+    validation: "Manifests valides"
+    rollback: "Fix manifests"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Network Configuration"
+    agent: network-engineer
+    skills:
+      - brainstorm
+    task: |
+      Configurer le networking:
+      - Ingress controller
+      - Network policies
+      - Service mesh if needed
+      - DNS configuration
+    output: "k8s-network.md"
+    validation: "Network OK"
+    rollback: "Fix network"
+    depends_on:
+      - "Manifest Creation"
+
+  - name: "Security Hardening"
+    agent: security-specialist
+    skills:
+      - review-code
+    task: |
+      Securiser K8s:
+      - Pod security policies
+      - RBAC configuration
+      - Secret management
+      - Network policies
+      - Image scanning
+    output: "k8s-security.md"
+    validation: "Security OK"
+    rollback: "Fix security"
+    depends_on:
+      - "Network Configuration"
+
+  - name: "Performance Tuning"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+    task: |
+      Optimiser performances:
+      - Resource requests/limits
+      - HPA configuration
+      - Pod affinity/anti-affinity
+      - Monitoring setup
+    output: "k8s-performance.md"
+    validation: "Performance OK"
+    rollback: "Adjust resources"
+    depends_on:
+      - "Security Hardening"

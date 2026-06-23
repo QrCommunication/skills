@@ -1,0 +1,111 @@
+name: rag-pipeline
+description: "Pipeline de creation de systeme RAG"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Requirements Analysis"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - brainstorm
+    task: |
+      Analyser les besoins RAG:
+      - Data sources
+      - Query types
+      - Accuracy requirements
+      - Latency constraints
+      - Cost budget
+    output: "rag-requirements.md"
+    validation: "Requirements clairs"
+    rollback: "Clarifier"
+
+  - name: "Architecture Design"
+    agent: tech-lead
+    skills:
+      - mermaid-diagrams
+      - ultrathink
+    task: |
+      Concevoir l'architecture:
+      - Embedding model selection
+      - Vector database choice
+      - Chunking strategy
+      - Retrieval approach
+      - LLM integration
+    output: "rag-architecture.md"
+    validation: "Architecture complete"
+    rollback: "Reviser"
+    depends_on:
+      - "Requirements Analysis"
+
+  - name: "Database Setup"
+    agent: database-admin
+    skills:
+      - supabase-postgres-best-practices
+    task: |
+      Configurer le vector store:
+      - Vector database setup (pgvector/Pinecone/etc.)
+      - Index configuration
+      - Metadata schema
+      - Query optimization
+    output: "Vector DB configure"
+    validation: "DB operationnelle"
+    rollback: "Cleanup resources"
+    depends_on:
+      - "Architecture Design"
+
+  - name: "Pipeline Implementation"
+    agent: backend-laravel
+    skills:
+      - apex
+      - git:commit
+    task: |
+      Implementer le pipeline:
+      - Document ingestion
+      - Chunking logic
+      - Embedding generation
+      - Storage in vector DB
+      - Retrieval queries
+    output: "Pipeline RAG fonctionnel"
+    validation: "Pipeline execute"
+    rollback: "git revert"
+    depends_on:
+      - "Database Setup"
+
+  - name: "Integration Testing"
+    agent: integration-specialist
+    skills:
+      - apex
+    task: |
+      Tester l'integration:
+      - Ingestion tests
+      - Retrieval accuracy
+      - Latency tests
+      - Cost monitoring
+    output: "rag-test-report.md"
+    validation: "RAG fonctionne"
+    rollback: "Fix issues"
+    depends_on:
+      - "Pipeline Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests qualite:
+      - Relevance tests
+      - Edge cases
+      - Error handling
+      - Load testing
+    output: "qa-report.md"
+    validation: "Quality OK"
+    rollback: "Liste bugs"
+    depends_on:
+      - "Integration Testing"

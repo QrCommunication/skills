@@ -1,0 +1,95 @@
+name: mobile-android
+description: "Pipeline de developpement application Android"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-native-skills
+
+steps:
+  - name: "Product Requirements"
+    agent: product-manager
+    skills:
+      - brainstorm
+      - ultrathink
+    task: |
+      Definir requirements Android:
+      - API level support (minimum)
+      - Device categories
+      - Android-specific features
+      - Play Store requirements
+    output: "android-requirements.md"
+    validation: "Requirements complets"
+    rollback: "Clarifier requirements"
+
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - building-native-ui
+      - design-system-starter
+    task: |
+      Design Android natif:
+      - Material Design 3 compliance
+      - Android navigation patterns
+      - Adaptive layouts
+      - Dark theme support
+    output: "android-design-spec.md"
+    validation: "Material Design compliant"
+    rollback: "Reviser design"
+    depends_on:
+      - "Product Requirements"
+
+  - name: "Implementation"
+    agent: react-native-dev
+    skills:
+      - apex
+      - building-native-ui
+      - expo-dev-client
+      - git:commit
+    task: |
+      Implementer pour Android:
+      - Android-specific components
+      - Native modules si necessaire
+      - Firebase integration
+      - Push notifications (FCM)
+    output: "App Android fonctionnelle"
+    validation: "Build Android OK"
+    rollback: "git revert"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "UI Polish"
+    agent: react-native-ui
+    skills:
+      - building-native-ui
+    task: |
+      Finaliser UI Android:
+      - Material animations
+      - Ripple effects
+      - Bottom sheets
+      - Android gestures
+    output: "UI Android native"
+    validation: "Feel natif"
+    rollback: "Simplifier"
+    depends_on:
+      - "Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests Android:
+      - Emulator tests
+      - Device farm tests
+      - Internal testing track
+      - Performance profiling
+    output: "android-test-report.md"
+    validation: "Tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "UI Polish"

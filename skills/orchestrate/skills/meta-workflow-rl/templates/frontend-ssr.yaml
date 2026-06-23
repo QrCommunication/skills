@@ -1,0 +1,97 @@
+name: frontend-ssr
+description: "Pipeline de developpement frontend SSR (Next.js/Nuxt)"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-best-practices
+
+steps:
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - design-system-starter
+      - web-design-guidelines
+    task: |
+      Concevoir l'interface:
+      - Wireframes des pages
+      - Design system
+      - SEO considerations (meta, OG tags)
+      - Loading states (SSR vs client)
+    output: "design-spec.md"
+    validation: "Design complet"
+    rollback: "Iterer design"
+
+  - name: "Page Implementation"
+    agent: frontend-react
+    skills:
+      - apex
+      - vercel-react-best-practices
+      - git:commit
+    task: |
+      Implementer les pages SSR:
+      - Pages avec getServerSideProps/getStaticProps
+      - API routes si necessaire
+      - Components
+      - Data fetching strategy
+    output: "Code SSR fonctionnel"
+    validation: "Build OK, SSR fonctionne"
+    rollback: "git revert changes"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "SEO Optimization"
+    agent: seo-specialist
+    skills:
+      - seo-audit
+      - schema-markup
+    task: |
+      Optimiser pour le SEO:
+      - Meta tags dynamiques
+      - Structured data (JSON-LD)
+      - Sitemap generation
+      - robots.txt
+      - Open Graph tags
+    output: "SEO implementation complete"
+    validation: "Lighthouse SEO > 90"
+    rollback: "Fix SEO issues"
+    depends_on:
+      - "Page Implementation"
+
+  - name: "Performance Optimization"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+      - vercel-react-best-practices
+    task: |
+      Optimiser les performances:
+      - Image optimization (next/image)
+      - Code splitting
+      - ISR configuration
+      - Edge functions si applicable
+      - Core Web Vitals
+    output: "Performance optimisee"
+    validation: "LCP < 2.5s, CLS < 0.1"
+    rollback: "Documenter bottlenecks"
+    depends_on:
+      - "SEO Optimization"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests finaux:
+      - E2E tests
+      - Lighthouse audit
+      - Cross-browser testing
+      - Mobile testing
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste bugs"
+    depends_on:
+      - "Performance Optimization"

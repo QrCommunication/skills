@@ -1,0 +1,107 @@
+name: security-audit
+description: "Pipeline d'audit securite complet OWASP"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Dependency Audit"
+    agent: security-specialist
+    skills:
+      - review-code
+      - explore
+    task: |
+      Audit des dependances:
+      - npm audit / composer audit
+      - Known vulnerabilities (CVE)
+      - Outdated packages
+      - License compliance
+      - Supply chain risks
+    output: "dependency-audit-report.md"
+    validation: "Audit complete avec CVEs"
+    rollback: "N/A - audit only"
+
+  - name: "OWASP Top 10 Review"
+    agent: security-specialist
+    skills:
+      - review-code
+      - brainstorm
+    task: |
+      Review OWASP Top 10:
+      - A01: Broken Access Control
+      - A02: Cryptographic Failures
+      - A03: Injection
+      - A04: Insecure Design
+      - A05: Security Misconfiguration
+      - A06: Vulnerable Components
+      - A07: Auth Failures
+      - A08: Data Integrity Failures
+      - A09: Logging Failures
+      - A10: SSRF
+    output: "owasp-review.md"
+    validation: "Chaque point evalue"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "Dependency Audit"
+
+  - name: "Code Security Review"
+    agent: code-reviewer
+    skills:
+      - review-code
+      - clean-code
+    task: |
+      Review code securite:
+      - Input validation
+      - Output encoding
+      - Authentication logic
+      - Authorization checks
+      - Session management
+      - Error handling
+      - Logging (no sensitive data)
+    output: "code-security-review.md"
+    validation: "Review complete"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "OWASP Top 10 Review"
+
+  - name: "Infrastructure Review"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+    task: |
+      Review infrastructure:
+      - SSL/TLS configuration
+      - Security headers
+      - Firewall rules
+      - Network segmentation
+      - Secrets management
+      - Backup security
+    output: "infra-security-review.md"
+    validation: "Review complete"
+    rollback: "N/A - audit only"
+    depends_on:
+      - "Code Security Review"
+
+  - name: "Security Report"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - humanizer
+    task: |
+      Compiler le rapport final:
+      - Executive summary
+      - Critical findings
+      - Detailed findings by severity
+      - Remediation priorities
+      - Compliance gaps (GDPR, HDS, etc.)
+      - Action plan
+    output: "security-audit-report.md"
+    validation: "Rapport complet et actionnable"
+    rollback: "Reviser rapport"
+    depends_on:
+      - "Infrastructure Review"

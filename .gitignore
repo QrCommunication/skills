@@ -1,0 +1,10 @@
+# Python venvs & caches (skills' local runtimes — regenerable from requirements.txt)
+.venv/
+__pycache__/
+*.pyc
+# Node (none committed, but guard against accidental installs)
+node_modules/
+# Packaged skill archives
+*.skill
+# OS / editor cruft
+.DS_Store

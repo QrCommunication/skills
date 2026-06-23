@@ -1,0 +1,66 @@
+name: "model-audit"
+description: "Audit des Models Eloquent - Relations, factories, migrations, conventions"
+
+# PROTECTION OBLIGATOIRE
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+# Skills injectés à TOUTES les étapes
+skills_global:
+  - clean-code
+  - review-code
+
+# Étapes du pipeline
+steps:
+  - name: "Analyse des Models"
+    agent: database-admin
+    skills: [apex, brainstorm]
+    task: |
+      Analyser tous les models Eloquent dans app/Models/:
+      - Vérifier les relations (hasMany, belongsTo, morphTo)
+      - Vérifier les fillable/guarded
+      - Vérifier les casts
+      - Vérifier les scopes
+      - Vérifier la cohérence avec les migrations
+    output: "Liste des problèmes détectés dans les models"
+    validation: "Chaque model a des relations cohérentes"
+    rollback: "Documenter les problèmes sans modifier"
+
+  - name: "Audit des Migrations"
+    agent: migration-specialist
+    skills: [clean-code, apex]
+    task: |
+      Vérifier toutes les migrations dans database/migrations/:
+      - Conditions hasTable/hasColumn présentes
+      - Index sur les foreign keys
+      - Pas de modification de migrations en production
+      - Rollback fonctionnel (down method)
+    output: "Rapport des migrations non conformes"
+    validation: "Toutes les migrations suivent les conventions"
+    rollback: "Créer nouvelles migrations correctives"
+
+  - name: "Audit des Factories"
+    agent: qa-testing
+    skills: [clean-code]
+    task: |
+      Vérifier les factories dans database/factories/:
+      - Chaque model a une factory
+      - Les factories génèrent des données valides
+      - Les relations sont correctement gérées
+    output: "Liste des factories manquantes ou incorrectes"
+    validation: "Coverage factory 100%"
+    rollback: "Créer les factories manquantes"
+
+  - name: "Rapport Consolidé"
+    agent: technical-writer
+    skills: [humanizer, writing-clearly-and-concisely]
+    task: |
+      Consolider les résultats des 3 analyses précédentes:
+      - Résumé exécutif
+      - Problèmes critiques
+      - Recommandations prioritaires
+      - Plan de correction
+    output: "Rapport model-audit.md"
+    validation: "Rapport complet et actionnable"
+    rollback: "N/A"

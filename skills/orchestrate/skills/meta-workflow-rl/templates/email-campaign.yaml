@@ -1,0 +1,76 @@
+name: email-campaign
+description: "Pipeline de creation de campagne email"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Campaign Strategy"
+    agent: market-researcher
+    skills:
+      - marketing-ideas
+      - brainstorm
+    task: |
+      Definir la strategie:
+      - Campaign objective
+      - Target segments
+      - Email sequence
+      - Success metrics
+    output: "email-strategy.md"
+    validation: "Strategie definie"
+    rollback: "Reviser strategie"
+
+  - name: "Sequence Design"
+    agent: market-researcher
+    skills:
+      - email-sequence
+      - marketing-psychology
+    task: |
+      Designer la sequence:
+      - Email sequence flow
+      - Timing between emails
+      - Triggers and conditions
+      - A/B test variants
+    output: "sequence-design.md"
+    validation: "Sequence complete"
+    rollback: "Reviser sequence"
+    depends_on:
+      - "Campaign Strategy"
+
+  - name: "Copywriting"
+    agent: market-researcher
+    skills:
+      - copywriting
+      - humanizer
+    task: |
+      Rediger les emails:
+      - Subject lines
+      - Preview text
+      - Body copy
+      - CTAs
+      - Personalization
+    output: "email-copy/"
+    validation: "Copy ready"
+    rollback: "Reviser copy"
+    depends_on:
+      - "Sequence Design"
+
+  - name: "Analytics Setup"
+    agent: market-researcher
+    skills:
+      - analytics-tracking
+    task: |
+      Configurer analytics:
+      - Tracking links
+      - Conversion tracking
+      - A/B test setup
+      - Dashboard creation
+    output: "Analytics configure"
+    validation: "Tracking ready"
+    rollback: "Fix tracking"
+    depends_on:
+      - "Copywriting"

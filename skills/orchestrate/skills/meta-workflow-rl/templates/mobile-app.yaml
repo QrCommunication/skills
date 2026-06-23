@@ -1,0 +1,121 @@
+name: mobile-app
+description: "Pipeline de developpement application mobile React Native"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+  - vercel-react-native-skills
+
+steps:
+  - name: "Product Requirements"
+    agent: product-manager
+    skills:
+      - brainstorm
+      - ultrathink
+      - humanizer
+    task: |
+      Definir les requirements produit:
+      - User personas
+      - Feature prioritization
+      - Success metrics
+      - Platform requirements (iOS/Android)
+      - Offline capabilities needs
+    output: "prd.md avec requirements prioritises"
+    validation: "Requirements clairs et priorises"
+    rollback: "Affiner avec stakeholders"
+
+  - name: "UI/UX Design"
+    agent: designer-ui-ux
+    skills:
+      - building-native-ui
+      - design-system-starter
+      - mermaid-diagrams
+    task: |
+      Concevoir l'interface mobile:
+      - Wireframes ecrans
+      - Design system mobile (spacing, typography)
+      - Navigation patterns
+      - Gestures et animations
+      - Platform-specific guidelines (iOS HIG, Material)
+    output: "mobile-design-spec.md"
+    validation: "Design conforme guidelines plateforme"
+    rollback: "Iterer design"
+    depends_on:
+      - "Product Requirements"
+
+  - name: "App Architecture"
+    agent: react-native-dev
+    skills:
+      - native-data-fetching
+      - expo-api-routes
+    task: |
+      Definir l'architecture de l'app:
+      - Navigation structure
+      - State management (Zustand/Redux)
+      - Data layer (API/offline)
+      - Native modules needs
+      - Build configuration
+    output: "architecture.md"
+    validation: "Architecture scalable"
+    rollback: "Reviser architecture"
+    depends_on:
+      - "UI/UX Design"
+
+  - name: "Core Implementation"
+    agent: react-native-dev
+    skills:
+      - apex
+      - building-native-ui
+      - expo-dev-client
+      - git:commit
+    task: |
+      Implementer les fonctionnalites core:
+      - Navigation setup
+      - Core screens
+      - API integration
+      - State management
+      - Tests unitaires
+    output: "App fonctionnelle core"
+    validation: "App builds, tests passent"
+    rollback: "git revert changes"
+    depends_on:
+      - "App Architecture"
+
+  - name: "UI Polish"
+    agent: react-native-ui
+    skills:
+      - building-native-ui
+      - design-system-starter
+    task: |
+      Finaliser l'UI:
+      - Animations fluides
+      - Micro-interactions
+      - Platform-specific adjustments
+      - Dark mode support
+      - Haptic feedback
+    output: "UI polie et native"
+    validation: "60fps animations, native feel"
+    rollback: "Simplifier animations"
+    depends_on:
+      - "Core Implementation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests mobile complets:
+      - Unit tests
+      - Integration tests
+      - E2E tests (Detox/Maestro)
+      - Device matrix testing
+      - Performance profiling
+    output: "test-report.md"
+    validation: "Tests passent sur iOS et Android"
+    rollback: "Liste bugs a corriger"
+    depends_on:
+      - "UI Polish"

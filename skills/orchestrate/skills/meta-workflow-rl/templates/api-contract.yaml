@@ -1,0 +1,95 @@
+name: api-contract
+description: "Pipeline de creation d'endpoint API avec contrats types"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+  - review-code
+
+steps:
+  - name: "Contract Definition"
+    agent: tech-lead
+    skills:
+      - ultrathink
+      - mermaid-diagrams
+    task: |
+      Definir les contrats API:
+      - Endpoint path et methode HTTP
+      - Request schema (body, params, query)
+      - Response schema (success + errors)
+      - Codes HTTP utilises
+      - Exemples curl, PHP, JS, Python
+    output: "L0_API_CONTRACTS.md + contracts/types.ts + contracts/dtos.php"
+    validation: "Schemas valides, exemples complets"
+    rollback: "Demander clarifications sur requirements"
+
+  - name: "Backend Implementation"
+    agent: backend-laravel
+    skills:
+      - apex
+      - laravel-api
+      - git:commit
+    task: |
+      Implementer l'endpoint selon les contrats:
+      - Controller avec methode
+      - Form Request pour validation
+      - API Resource pour response
+      - Route registration
+      - Tests PHPUnit
+    output: "Code backend respectant exactement les contrats"
+    validation: "Tests passent, contrats respectes"
+    rollback: "git revert, fix contract mismatch"
+    depends_on:
+      - "Contract Definition"
+
+  - name: "Contract Validation"
+    agent: validator
+    skills:
+      - review-code
+    task: |
+      Valider la conformite backend/contrats:
+      - Comparer response reelle vs schema
+      - Verifier tous les codes HTTP
+      - Tester les cas d'erreur
+      - Valider les types TypeScript
+    output: "Rapport de conformite contrats"
+    validation: "100% conformite contrats"
+    rollback: "Retour implementation avec ecarts listes"
+    depends_on:
+      - "Backend Implementation"
+
+  - name: "Frontend Integration"
+    agent: frontend-react
+    skills:
+      - apex
+      - native-data-fetching
+      - git:commit
+    task: |
+      Integrer l'API dans le frontend:
+      - Hook useQuery/useMutation
+      - Types TypeScript depuis contrats
+      - Gestion erreurs
+      - Loading states
+    output: "Hook frontend type-safe"
+    validation: "TypeScript compile, API call works"
+    rollback: "git revert frontend changes"
+    depends_on:
+      - "Contract Validation"
+
+  - name: "QA Testing"
+    agent: qa-testing
+    skills:
+      - ci-fixer
+    task: |
+      Tests d'integration complets:
+      - E2E endpoint -> frontend
+      - Tests de charge basiques
+      - Tests d'erreur
+    output: "test-report.md"
+    validation: "Tous tests passent"
+    rollback: "Liste des bugs a corriger"
+    depends_on:
+      - "Frontend Integration"

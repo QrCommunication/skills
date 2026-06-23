@@ -1,0 +1,75 @@
+name: monitoring-setup
+description: "Pipeline de setup monitoring applicatif"
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - clean-code
+
+steps:
+  - name: "Monitoring Strategy"
+    agent: devops-infra
+    skills:
+      - brainstorm
+      - mermaid-diagrams
+    task: |
+      Definir la strategie:
+      - Metrics to collect
+      - Log aggregation
+      - Tracing needs
+      - Alerting strategy
+    output: "monitoring-strategy.md"
+    validation: "Strategie definie"
+    rollback: "Reviser strategie"
+
+  - name: "Infrastructure Setup"
+    agent: devops-infra
+    skills:
+      - ci-fixer
+      - git:commit
+    task: |
+      Setup infrastructure:
+      - Metrics collection (Prometheus/Datadog)
+      - Log aggregation (ELK/Loki)
+      - Tracing (Jaeger/Tempo)
+      - Storage retention
+    output: "Monitoring infrastructure"
+    validation: "Infrastructure ready"
+    rollback: "Cleanup"
+    depends_on:
+      - "Monitoring Strategy"
+
+  - name: "Performance Dashboards"
+    agent: performance-engineer
+    skills:
+      - reducing-entropy
+    task: |
+      Creer les dashboards:
+      - Application performance
+      - Infrastructure health
+      - Business metrics
+      - Custom dashboards
+    output: "Dashboards crees"
+    validation: "Dashboards fonctionnels"
+    rollback: "Fix dashboards"
+    depends_on:
+      - "Infrastructure Setup"
+
+  - name: "Documentation"
+    agent: technical-writer
+    skills:
+      - writing-clearly-and-concisely
+      - crafting-effective-readmes
+    task: |
+      Documenter le monitoring:
+      - Runbooks
+      - Alert response procedures
+      - Dashboard guide
+      - Troubleshooting guide
+    output: "monitoring-docs/"
+    validation: "Documentation complete"
+    rollback: "Completer docs"
+    depends_on:
+      - "Performance Dashboards"

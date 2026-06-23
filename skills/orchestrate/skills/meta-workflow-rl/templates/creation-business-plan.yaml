@@ -1,0 +1,165 @@
+name: creation-business-plan
+description: "Pipeline de creation de business plan complet"
+category: marketing
+
+protection:
+  before: impact-analyzer
+  after: regression-guard
+
+skills_global:
+  - writing-clearly-and-concisely
+  - humanizer
+  - beautiful-prose
+
+steps:
+  - name: "Executive Summary (draft)"
+    agent: product-strategist
+    skills: [brainstorming, market-sizing-analysis]
+    task: |
+      Rediger un Executive Summary draft du business plan :
+      - Vision et mission de l'entreprise
+      - Proposition de valeur unique
+      - Marche cible et opportunite
+      - Modele economique en resume
+      - Objectifs cles a 1, 3 et 5 ans
+      Ce draft sera affine en fin de processus une fois toutes les sections completees.
+    output: "01-executive-summary-draft.md"
+    validation: "Vision claire, proposition de valeur definie, objectifs chiffres"
+    rollback: "N/A - document initial"
+
+  - name: "Analyse de Marche"
+    agent: market-researcher
+    parallel_group: "research"
+    skills: [deep-research, statistical-analysis, generate-image]
+    task: |
+      Realiser une analyse de marche approfondie :
+      - Taille du marche (TAM, SAM, SOM) avec graphiques illustratifs
+      - Tendances et dynamiques du secteur
+      - Segmentation clientele avec personas
+      - Besoins non satisfaits et pain points
+      - Barriere a l'entree
+      - Reglementation applicable
+      Generer des illustrations : graphiques de taille de marche, courbes de tendance, matrice de segmentation.
+    output: "02-analyse-marche.md"
+    validation: "TAM/SAM/SOM chiffres, sources citees, au moins 3 segments identifies, illustrations generees"
+    rollback: "Reprendre avec sources alternatives"
+
+  - name: "Analyse Concurrentielle"
+    agent: competitive-analyst
+    parallel_group: "research"
+    skills: [deep-research, competitive-landscape, generate-image]
+    task: |
+      Realiser une analyse concurrentielle complete :
+      - Cartographie des concurrents directs et indirects
+      - Matrice de positionnement (prix/fonctionnalites)
+      - Forces et faiblesses de chaque concurrent (SWOT)
+      - Parts de marche estimees
+      - Avantages competitifs differenciants
+      - Barrieres a l'entree pour nouveaux entrants
+      Generer des illustrations : mapping concurrentiel, matrice de positionnement, radar chart des forces.
+    output: "03-analyse-concurrentielle.md"
+    validation: "Au moins 5 concurrents analyses, matrice de positionnement, illustrations generees"
+    rollback: "Elargir le scope de recherche"
+
+  - name: "Produit / Service"
+    agent: product-strategist
+    depends_on: ["research"]
+    skills: [feature-design-assistant, generate-image]
+    task: |
+      Decrire en detail le produit ou service :
+      - Description detaillee de l'offre
+      - Fonctionnalites cles et roadmap produit
+      - Proposition de valeur unique (USP)
+      - Cycle de vie du produit
+      - Propriete intellectuelle et brevets
+      - Pricing strategy et modele de revenus
+      Generer des illustrations : schema du produit, roadmap visuelle, diagramme de la chaine de valeur.
+    output: "04-produit-service.md"
+    validation: "USP claire, pricing defini, roadmap avec jalons, illustrations generees"
+    rollback: "Revoir positionnement produit"
+
+  - name: "Equipe et Organisation"
+    agent: business-analyst
+    parallel_group: "strategy"
+    skills: [organizational-design]
+    task: |
+      Presenter l'equipe et l'organisation :
+      - Equipe fondatrice (parcours, competences cles)
+      - Organigramme et roles cles
+      - Besoins en recrutement (phases)
+      - Advisors et mentors
+      - Culture d'entreprise et valeurs
+      - Structure juridique
+    output: "05-equipe-organisation.md"
+    validation: "Organigramme complet, competences cles couvertes, plan de recrutement"
+    rollback: "N/A - documentation"
+
+  - name: "Strategie Marketing et Commerciale"
+    agent: content-marketer
+    parallel_group: "strategy"
+    skills: [marketing-strategy-pmm, launch-strategy, generate-image]
+    task: |
+      Definir la strategie marketing et commerciale :
+      - Strategie d'acquisition client (canaux)
+      - Funnel de conversion detaille
+      - Plan de communication et branding
+      - Strategie de pricing et positionnement
+      - Partenariats strategiques
+      - KPIs marketing et objectifs
+      - Budget marketing previsionnel
+      Generer des illustrations : funnel de conversion, matrice des canaux, timeline de lancement.
+    output: "06-strategie-marketing.md"
+    validation: "Funnel defini, canaux priorises, budget estime, illustrations generees"
+    rollback: "Ajuster strategie canaux"
+
+  - name: "Plan Operationnel"
+    agent: business-analyst
+    parallel_group: "strategy"
+    skills: [process-design]
+    task: |
+      Detailler le plan operationnel :
+      - Processus de production/livraison
+      - Infrastructure technique necessaire
+      - Supply chain et fournisseurs cles
+      - Jalons operationnels (6, 12, 24, 36 mois)
+      - Risques operationnels et mitigations
+      - Indicateurs de performance operationnelle
+    output: "07-plan-operationnel.md"
+    validation: "Jalons dates, risques identifies avec mitigations, KPIs definis"
+    rollback: "Revoir timeline"
+
+  - name: "Plan Financier"
+    agent: finance-controller
+    depends_on: ["strategy"]
+    skills: [financial-modeling, generate-image]
+    task: |
+      Elaborer le plan financier complet :
+      - Compte de resultat previsionnel (3-5 ans)
+      - Bilan previsionnel
+      - Plan de tresorerie mensuel (annee 1)
+      - Seuil de rentabilite (break-even)
+      - Besoins de financement et utilisation des fonds
+      - Hypotheses cles et scenarios (optimiste, base, pessimiste)
+      - Ratios financiers cles (marge, CAC, LTV, burn rate)
+      Generer des illustrations : graphiques de projections financieres, courbe de break-even, waterfall chart des revenus.
+    output: "08-plan-financier.md"
+    validation: "Projections 3-5 ans, break-even calcule, 3 scenarios, illustrations generees"
+    rollback: "Revoir hypotheses de base"
+
+  - name: "Synthese, Mise en page et Export PDF"
+    agent: technical-writer
+    depends_on: ["08-plan-financier"]
+    skills: [doc-coauthoring, pdf, generate-image]
+    task: |
+      Assembler et finaliser le business plan complet :
+      - Consolider toutes les sections (01 a 08)
+      - Affiner l'Executive Summary avec les donnees finales
+      - Creer une page de couverture professionnelle (illustration generee)
+      - Table des matieres
+      - Harmoniser le style et le ton
+      - Ajouter annexes si necessaire
+      - Generer le document final en Markdown + export PDF
+      Generer une illustration de couverture professionnelle.
+    output: "business-plan-final.md + business-plan-final.pdf"
+    validation: "Document complet, coherent, couverture generee, PDF exporte"
+    rollback: "Corriger sections incoherentes"
