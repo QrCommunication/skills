@@ -1,0 +1,14 @@
+# Validateurs Python du skill document-format-conformance.
+# Installés dans ./.venv (racine du skill) par scripts/setup.sh.
+# Les scripts python auto-détectent ce .venv et s'y ré-exécutent (voir _common.py).
+#
+# Installation manuelle équivalente :
+#   python3 -m venv .venv && .venv/bin/pip install -r scripts/requirements.txt
+
+pikepdf>=10        # bindings libqpdf : lecture / écriture / réparation PDF conforme ISO 32000
+pypdf>=6           # incremental update (préservation des signatures) + inspection objets
+factur-x>=4.2      # Factur-X / ZUGFeRD / Order-X : extraction XML, XSD + Schematron EN16931 (via saxonche)
+python-docx>=1.2   # OOXML WordprocessingML — sémantique .docx
+python-pptx>=1.0   # OOXML PresentationML — sémantique .pptx
+openpyxl>=3.1      # OOXML SpreadsheetML — sémantique .xlsx
+lxml>=5            # validation XSD / RelaxNG + manipulation XML des parts OPC / ODF

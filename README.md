@@ -69,6 +69,28 @@ Distilled from the `superpdp-expert` agent into portable skill form. Pairs with
 the `isca-…` skill (which covers format conformance and the FR regulatory
 context).
 
+### 📄 [`document-format-conformance`](skills/document-format-conformance/)
+
+Specification expert for **document formats** and their **conformance** — PDF
+(ISO 32000), PDF/A (ISO 19005), Office OOXML (ECMA-376 / ISO 29500: .docx .xlsx
+.pptx), OpenDocument (ISO 26300: .odt .ods .odp) and Factur-X / PDF-A3
+(container). Two modes: **file** (inspect, validate, modify-in-place while
+staying conformant) and **code** (audit a generator/engine against the spec).
+
+Principle: **no home-grown parsers** — the scripts are thin wrappers over the
+reference validators, and the skill **self-provisions** them:
+
+| Tool | Role |
+|------|------|
+| `scripts/setup.sh` | Idempotent bootstrap: `.venv` + `qpdf`/`xmllint` (apt) + **veraPDF** (headless). |
+| `inspect_doc.py` / `validate.py` | Structure dump + conformance report (qpdf, veraPDF, lxml/xmllint). |
+| `pdf_modify.py` | Conformant PDF edits incl. **incremental update** (signature-safe, via pypdf). |
+| `opc_modify.py` | Patch a part inside OOXML/ODF with valid repackage (ODF `mimetype` rule enforced). |
+| `facturx_tool.py` | Factur-X PDF/A-3 container check/extract/embed (semantics → `isca-…`). |
+
+Covers the **PDF/A-3 mechanics** of Factur-X; the **fiscal XML semantics**
+(EN16931 Schematron, business terms) live in the `isca-…` skill — no overlap.
+
 ## Repository layout
 
 ```
@@ -81,6 +103,10 @@ skills/                                    # this repo
     ├── super-pdp/
     │   ├── SKILL.md  ├── README.md
     │   └── references/   # OpenAPI spec + code tables
+    ├── document-format-conformance/
+    │   ├── SKILL.md  ├── README.md
+    │   ├── references/   # pdf · ooxml · odf · facturx-pdfa3 · audit-methodology
+    │   └── scripts/      # setup.sh + validators (self-provisioning .venv)
     └── orchestrate/
         ├── SKILL.md  ├── README.md
         ├── skills/    # bundled dependency skills
